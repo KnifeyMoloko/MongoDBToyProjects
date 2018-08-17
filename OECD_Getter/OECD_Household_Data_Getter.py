@@ -31,8 +31,8 @@ def database_dump():
 
 
 # check for existing Outputs dir, if not found, create one and than dump data
-if os.path.isdir(os.path.join(os.path.curdir, "Mongo/Outputs/")):
+if os.path.isdir(os.path.join(os.path.curdir, "Mongo/Outputs")):
     database_dump()
 else:
-    os.mkdir(os.path.join(os.path.curdir, "Mongo/Outputs"))
+    os.makedirs(os.path.join(os.path.curdir, "Mongo/Outputs"))
     database_dump()
