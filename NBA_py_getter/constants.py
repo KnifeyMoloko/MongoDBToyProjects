@@ -1,6 +1,5 @@
 # global variables
 
-has_db = False
-has_teams_collection = False
-has_games_collection = False
-db_name = "NBA_Data_Warehouse"
+db_name = "NBA"
+season = "2017-2018"
+log = []

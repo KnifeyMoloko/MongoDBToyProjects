@@ -13,26 +13,34 @@ Date: 08.17.2018 13:19"""
 #imports
 import pymongo
 import pandas
-import datetime
+from datetime import datetime
+from pathlib import Path
 from nba_py import constants, game, player, team, Scoreboard
-from constants import has_db, has_games_collection, \
-    has_teams_collection, db_name
-from helpers import check_db, create_db
+from constants import db_name, season, log
+from helpers import add_log_entry, log_dump
 
 
 
 # set up the Mongo client
 
 mongo_client = pymongo.mongo_client.MongoClient()
-db = mongo_client["NBA_Data_Warehouse"]
 
-# check if the relevant database exists and create if needed
+# set up pathlib instance for local file manipulations
 
-#if not check_db(db_name, mongo_client):
-#    db = create_db(db_name, mongo_client)
+path = Path('.') # current dir path
 
-print(mongo_client.list_database_names())
+# create the db and collections; 'lazy' creation will create with first insert
 
+teams = mongo_client.nba.teams
+games = mongo_client.nba.games
+logs = mongo_client.nba.logs
+
+add_log_entry(datetime.timestamp(datetime.now()), "Error", "main", "no_func", "trololololo", log)
+add_log_entry(datetime.timestamp(datetime.now()), "Hodor", "main", "no_func", "trololololohey", log)
+add_log_entry(datetime.timestamp(datetime.now()), "Mordor", "main", "no_func", "hey", log)
+
+
+log_dump(log, path, datetime.today(), logs)
 # call data getters to fetch data from nba.com
 
 # modify the data if needed
@@ -54,7 +62,7 @@ def get_games(date=None):
 
     if date is None:
         #TODO: Resolve the timing issue - some games may slip between the days depending on the time the script is run
-        date = datetime.date(2018, 2, 20)
+        date = datetime(2018, 2, 20)
 
     games = Scoreboard(month=date.month, day=date.day, year=date.year)
     #TODO: empty-or-not logic here
@@ -75,7 +83,7 @@ def get_line_score(date=None):
     Return:
         games : Data Frame object of games played at a given day
     """
-    scores = nba_py.Scoreboard(month=date.month, day=date.day, year=date.year)
+    scores = Scoreboard(month=date.month, day=date.day, year=date.year)
     line_score = scores.line_score()
     visiting_side_score = line_score.iloc[::2, [1, 5, 21]]  # visiting side
     home_side_score = line_score.iloc[1::2, [1, 5, 21]]  # home side
