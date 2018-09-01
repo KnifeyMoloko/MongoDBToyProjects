@@ -1,0 +1,20 @@
+Database structure:
+    {Collection : Season_name
+        {DB: Teams :
+            {
+                Properties...
+                Prop=Season_series :
+                    {
+                        Game_1
+                        Game_2
+                        ...
+                        Game_82
+                    }
+            }
+        }
+        {DB: Games :
+            {
+                Properties...
+            }
+        }
+    }

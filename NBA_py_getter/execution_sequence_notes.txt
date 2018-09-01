@@ -1,0 +1,3 @@
+Running MongoDB sync:
+    mongod --dbpath <path>
+#Always run this before the python scripts that need to access the Mongo db for any reason
