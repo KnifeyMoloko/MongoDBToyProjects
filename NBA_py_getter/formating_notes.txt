@@ -1,3 +1,0 @@
-# Error prompts format
-
-"\n\t<Function module: function name - error message\n"

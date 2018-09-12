@@ -13,13 +13,13 @@ Date: 08.17.2018 13:19"""
 #imports
 import pymongo
 import pandas
+from os.path import basename
+from inspect import stack
 from datetime import datetime
 from pathlib import Path
 from nba_py import constants, game, player, team, Scoreboard
 from constants import db_name, season, log
 from helpers import add_log_entry, log_dump
-
-
 
 # set up the Mongo client
 
@@ -35,12 +35,6 @@ teams = mongo_client.nba.teams
 games = mongo_client.nba.games
 logs = mongo_client.nba.logs
 
-add_log_entry(datetime.timestamp(datetime.now()), "Error", "main", "no_func", "trololololo", log)
-add_log_entry(datetime.timestamp(datetime.now()), "Hodor", "main", "no_func", "trololololohey", log)
-add_log_entry(datetime.timestamp(datetime.now()), "Mordor", "main", "no_func", "hey", log)
-
-
-log_dump(log, path, datetime.today(), logs)
 # call data getters to fetch data from nba.com
 
 # modify the data if needed
@@ -49,6 +43,8 @@ log_dump(log, path, datetime.today(), logs)
 
 # data getters
 
+# dump the logs into the mongo database and local catalog
+log_dump(log, path, datetime.today(), logs)
 
 
 def get_games(date=None):
