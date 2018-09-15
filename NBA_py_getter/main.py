@@ -13,21 +13,27 @@ Date: 08.17.2018 13:19"""
 #imports
 import pymongo
 import pandas
-from os.path import basename
-from inspect import stack
+import logging
+from logging import config as log_config
 from datetime import datetime
 from pathlib import Path
 from nba_py import constants, game, player, team, Scoreboard
-from constants import db_name, season, log
-from helpers import add_log_entry, log_dump
+from constants import log, logger_root_config
+from helpers import log_dump
 
 # set up the Mongo client
 
 mongo_client = pymongo.mongo_client.MongoClient()
 
-# set up pathlib instance for local file manipulations
+# set up pathlib instance for local log file manipulations
 
-path = Path('.') # current dir path
+path = Path('.')/'logs'
+path.mkdir(parents=True, exist_ok=True)
+
+# set up and configure root logger here
+
+log_config.dictConfig(logger_root_config)
+logger = logging.getLogger(__name__)  # name the logger with the module name
 
 # create the db and collections; 'lazy' creation will create with first insert
 
@@ -44,7 +50,7 @@ logs = mongo_client.nba.logs
 # data getters
 
 # dump the logs into the mongo database and local catalog
-log_dump(log, path, datetime.today(), logs)
+log_dump(log, datetime.today(), logs)
 
 
 def get_games(date=None):
