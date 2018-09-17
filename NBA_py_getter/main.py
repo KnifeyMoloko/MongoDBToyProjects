@@ -19,7 +19,7 @@ from datetime import datetime
 from pathlib import Path
 from nba_py import constants, game, player, team, Scoreboard
 from constants import log, logger_root_config
-from helpers import log_dump
+from helpers import log_dump, has_games
 
 # set up the Mongo client
 
@@ -50,7 +50,7 @@ logs = mongo_client.nba.logs
 # data getters
 
 # dump the logs into the mongo database and local catalog
-log_dump(log, datetime.today(), logs)
+#log_dump(log, datetime.today(), logs)
 
 
 def get_games(date=None):
@@ -67,9 +67,6 @@ def get_games(date=None):
         date = datetime(2018, 2, 20)
 
     games = Scoreboard(month=date.month, day=date.day, year=date.year)
-    #TODO: empty-or-not logic here
-    print(games.available().empty)
-    print(games.available())
 
 
     #TODO: decide on the data model that I want to use: what to keep and in what form
@@ -94,5 +91,4 @@ def get_line_score(date=None):
 
 
 if __name__ == "__main__":
-    get_games()
-
+    print(has_games(datetime(2018, 2, 20), Scoreboard))
