@@ -25,7 +25,7 @@ def log_dump(log_container, timestamp, mongo_instance):
         logging.exception("Bumped into an error while dumping log!\n%s", e)
 
 
-def has_games(date, pygame_scoreboard):
+def has_games(date, scoreboard):
     """
     Checks if there were any matches played on a given date. Use this as the
     condition before running the data getters to avoid empty data dumps.
@@ -36,7 +36,7 @@ def has_games(date, pygame_scoreboard):
     """
     logging.info("Game availability check started.")
     try:
-        games = pygame_scoreboard(month=date.month, day=date.day, year=date.year)\
+        games = scoreboard(month=date.month, day=date.day, year=date.year)\
             .available()\
             .empty
         logging.info("Game availability check ended.")
@@ -44,3 +44,43 @@ def has_games(date, pygame_scoreboard):
     except Exception as e:
         logging.exception("Bumped into an error while checking game "
                           "availability\n%s", e)
+
+
+def get_games(date, scoreboard):
+    """
+
+    :param date:
+    :param scoreboard:
+    :return:
+    """
+    """Gets a pandas Data Frame object with the data for games played on
+    a given day.
+
+    Args:
+        date : datetime object, defaults to datetime.datetime.now()
+    Return : Data Frame object with game data.
+    """
+
+    games = scoreboard(month=date.month, day=date.day, year=date.year)
+    return games
+
+
+def get_line_score(date, scoreboard):
+    """
+
+    :param date:
+    :param scoreboard:
+    :return:
+    """
+    """Get Data Frame of games for today (dates set for dev and debug.
+    Args:
+        date : datetime object for the day we want games from
+    Return:
+        games : Data Frame object of games played at a given day
+    """
+    scores = scoreboard(month=date.month, day=date.day, year=date.year)
+    line_score = scores.line_score()
+    visiting_side_score = line_score.iloc[::2, [1, 5, 21]]  # visiting side
+    home_side_score = line_score.iloc[1::2, [1, 5, 21]]  # home side
+    merged = visiting_side_score.merge(home_side_score, on="GAME_SEQUENCE")
+    return merged
