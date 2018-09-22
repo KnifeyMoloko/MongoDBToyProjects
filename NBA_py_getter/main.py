@@ -12,7 +12,7 @@ Date: 08.17.2018 13:19"""
 
 #imports
 import pymongo
-import pandas
+#import pandas
 import logging
 from logging import config as log_config
 from datetime import datetime
@@ -44,9 +44,10 @@ def main():
     logs = mongo_client.nba.logs
 
     # call data getters to fetch data from nba.com
-    print(has_games(datetime(2018, 2, 25), Scoreboard))
-    print(get_games(datetime(2018, 2, 25), Scoreboard))
-    print(get_line_score(datetime(2018, 2, 25), Scoreboard))
+    date = datetime(2018, 2, 25)
+    if has_games(date, Scoreboard):
+        print(get_games(date, Scoreboard))
+        print(get_line_score(date, Scoreboard))
 
     # modify the data if needed
 

@@ -36,3 +36,7 @@ Dataflow:
                         IDs
 [Scoreboard.available]  ==> [Nba_py.game] ==> {combining the Game object} | ==> insert to 'games' collection
                                                                           | {assing to teams based on IDs} ==> insert to teams
+
+Things to consider:
+* it may be better to keep the nba_py data in JSON/BSON format and work on it in pandas, importing into a dataframe
+when needed

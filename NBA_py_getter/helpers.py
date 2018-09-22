@@ -21,8 +21,9 @@ def log_dump(log_container, timestamp, mongo_instance):
     # add log output to database
     try:
         mongo_instance.insert_one(db_entry)
-    except Exception as e:
-        logging.exception("Bumped into an error while dumping log!\n%s", e)
+    except Exception:
+        #TODO: Maybe create a list of mongodb erros to check here?
+        logging.exception("Bumped into an error while dumping log!")
 
 
 def has_games(date, scoreboard):
@@ -31,36 +32,28 @@ def has_games(date, scoreboard):
     condition before running the data getters to avoid empty data dumps.
 
     :param date: datetime.datetime object
-    :param pygame_scoreboard: provide a Scoreboard class instance for the check
+    :param pygame_scoreboard: provide the Scoreboard import for the check
     :return: Boolean - True if there were any matches
     """
     logging.info("Game availability check started.")
     try:
-        games = scoreboard(month=date.month, day=date.day, year=date.year)\
-            .available()\
-            .empty
+        games = scoreboard(month=date.month, day=date.day, year=date.year).available()
         logging.info("Game availability check ended.")
-        return not games
-    except Exception as e:
+        avialability = not(games == [])
+        return avialability
+    except Exception:
         logging.exception("Bumped into an error while checking game "
-                          "availability\n%s", e)
+                          "availability")
 
 
 def get_games(date, scoreboard):
     """
 
-    :param date:
-    :param scoreboard:
-    :return:
+    :param date: datetime.datetime object for the date of the data
+    :param scoreboard: nba_py Scoreboard module
+    :return: nba_py Scoreboard instance for the given date
     """
-    """Gets a pandas Data Frame object with the data for games played on
-    a given day.
-
-    Args:
-        date : datetime object, defaults to datetime.datetime.now()
-    Return : Data Frame object with game data.
-    """
-
+    #TODO: This can be a dispatch function for the Scorebaord-realted data
     games = scoreboard(month=date.month, day=date.day, year=date.year)
     return games
 
@@ -79,8 +72,10 @@ def get_line_score(date, scoreboard):
         games : Data Frame object of games played at a given day
     """
     scores = scoreboard(month=date.month, day=date.day, year=date.year)
+    """
     line_score = scores.line_score()
     visiting_side_score = line_score.iloc[::2, [1, 5, 21]]  # visiting side
     home_side_score = line_score.iloc[1::2, [1, 5, 21]]  # home side
     merged = visiting_side_score.merge(home_side_score, on="GAME_SEQUENCE")
-    return merged
+    """
+    return scores.line_score()

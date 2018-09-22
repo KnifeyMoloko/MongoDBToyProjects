@@ -12,6 +12,7 @@ runtime_timestamp = datetime.today()
 
 # Logger object configuration
 logger_root_config = {'version': 1,
+                      'disable_existing_loggers': False,
                       'loggers':
                           {
                               '':
