@@ -32,15 +32,14 @@ def has_games(date, scoreboard):
     condition before running the data getters to avoid empty data dumps.
 
     :param date: datetime.datetime object
-    :param pygame_scoreboard: provide the Scoreboard import for the check
+    :param scoreboard: provide the Scoreboard import for the check
     :return: Boolean - True if there were any matches
     """
     logging.info("Game availability check started.")
     try:
-        games = scoreboard(month=date.month, day=date.day, year=date.year).available()
-        logging.info("Game availability check ended.")
-        avialability = not(games == [])
-        return avialability
+        if scoreboard(month=date.month, day=date.day, year=date.year).available() is not []:
+            logging.info("Game availability check ended.")
+            return True
     except Exception:
         logging.exception("Bumped into an error while checking game "
                           "availability")
@@ -79,3 +78,4 @@ def get_line_score(date, scoreboard):
     merged = visiting_side_score.merge(home_side_score, on="GAME_SEQUENCE")
     """
     return scores.line_score()
+

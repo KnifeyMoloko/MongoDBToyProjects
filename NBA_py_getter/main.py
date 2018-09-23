@@ -12,8 +12,9 @@ Date: 08.17.2018 13:19"""
 
 #imports
 import pymongo
-#import pandas
+import json
 import logging
+import pprint
 from logging import config as log_config
 from datetime import datetime
 from pathlib import Path
@@ -46,8 +47,31 @@ def main():
     # call data getters to fetch data from nba.com
     date = datetime(2018, 2, 25)
     if has_games(date, Scoreboard):
-        print(get_games(date, Scoreboard))
-        print(get_line_score(date, Scoreboard))
+        json_dump = Scoreboard(month=date.month, day=date.day, year=date.year).json
+        json_out = {"game_header": json_dump["resultSets"][0],  # pretty easy to pair games IDs with team IDs and dates
+                    "line_score": json_dump["resultSets"][1],  # the meaty part, scores by quarter, who won etc.
+                    "series_standings": json_dump["resultSets"][2],  # another good candidate for pairing team ID with game ID and dates
+                    "last_meeting": json_dump["resultSets"][3],  # might be useful, sicne it allows to string previous matches for a team, but probably we can do without it
+                    "east_conference_standings_by_day": json_dump["resultSets"][4],  # only useful if we want to show standings
+                    "west_conference_standings_by_day": json_dump["resultSets"][5],  # as above
+                    "availability": json_dump["resultSets"][6],  # good source of game IDs and availability of games on a given date
+                    }
+
+        #for i in json_dump["resultSets"]:
+        #    print([i["name"]])
+        #    print(i["headers"])
+        #    print(i["rowSet"])
+
+        row_set = (json_dump["resultSets"][1]["rowSet"])
+        # this is essentialy the daily scores layout, though it might make more sense to put it in the SQL db
+        for a, h in zip(row_set[::2], row_set[1::2]):
+            print(a[4], a[21], " : ", h[4], h[21])
+
+
+
+
+        #print(get_games(date, Scoreboard))
+        #print(get_line_score(date, Scoreboard))
 
     # modify the data if needed
 
