@@ -26,18 +26,18 @@ def log_dump(log_container, timestamp, mongo_instance):
         logging.exception("Bumped into an error while dumping log!")
 
 
-def has_games(date, scoreboard):
+def has_games(date, scoreboard_json):
     """
     Checks if there were any matches played on a given date. Use this as the
     condition before running the data getters to avoid empty data dumps.
 
     :param date: datetime.datetime object
-    :param scoreboard: provide the Scoreboard import for the check
+    :param scoreboard_json: Scoreboard JSON dump
     :return: Boolean - True if there were any matches
     """
     logging.info("Game availability check started.")
     try:
-        if scoreboard(month=date.month, day=date.day, year=date.year).available() is not []:
+        if scoreboard_json["resultSets"][6]["rowSet"] is not []:
             logging.info("Game availability check ended.")
             return True
     except Exception:
@@ -47,7 +47,6 @@ def has_games(date, scoreboard):
 
 def get_games(date, scoreboard):
     """
-
     :param date: datetime.datetime object for the date of the data
     :param scoreboard: nba_py Scoreboard module
     :return: nba_py Scoreboard instance for the given date
@@ -57,25 +56,43 @@ def get_games(date, scoreboard):
     return games
 
 
-def get_line_score(date, scoreboard):
+def get_line_score(date, scoreboard_json):
     """
+    :param date: datetime.datetime object for the date of the data
+    :param scoreboard_json: nba_py Scoreboard JSON dump
+    :return: the LineScore key values from the JSON dump
+    """
+    scores = scoreboard_json["resultSets"][1]["rowSet"]
+    return scores
 
-    :param date:
-    :param scoreboard:
-    :return:
+def get_series_standings(date, scoreboard_json):
     """
-    """Get Data Frame of games for today (dates set for dev and debug.
-    Args:
-        date : datetime object for the day we want games from
-    Return:
-        games : Data Frame object of games played at a given day
+    :param date: datetime.datetime object for the date of the data
+    :param scoreboard_json: nba_py Scoreboard JSON dump
+    :return: series standings for a given game
     """
-    scores = scoreboard(month=date.month, day=date.day, year=date.year)
+    series_standings = scoreboard_json["resultSets"][2]["rowSet"]
+    return series_standings
+
+
+def get_last_meeting(date, scoreboard_json):
     """
-    line_score = scores.line_score()
-    visiting_side_score = line_score.iloc[::2, [1, 5, 21]]  # visiting side
-    home_side_score = line_score.iloc[1::2, [1, 5, 21]]  # home side
-    merged = visiting_side_score.merge(home_side_score, on="GAME_SEQUENCE")
+    :param date: datetime.datetime object for the date of the data
+    :param scoreboard_json: nba_py Scoreboard JSON dump
+    :return: last meeting data for a given game
     """
-    return scores.line_score()
+    last_meeting = scoreboard_json["resultSets"][3]["rowSet"]
+    return last_meeting
+
+
+def get_conference_standings(date, scoreboard_json):
+    """
+    :param date: datetime.datetime object for the date of the data
+    :param scoreboard_json: nba_py Scoreboard JSON dump
+    :return: a dict containing west and east conference data for a given date
+    """
+    east_standings = scoreboard_json["resultSets"][4]["rowSet"]
+    west_standings = scoreboard_json["resultSets"][5]["rowSet"]
+    daily_standings = {"east": east_standings, "west": west_standings}
+    return daily_standings
 
