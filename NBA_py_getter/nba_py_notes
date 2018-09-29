@@ -32,34 +32,34 @@ NBA PY Module Inventory (based on the headers in the respective packages)
              'Q4       - ',
              1]
 1.2 name: LineScore,
-    headers: ['GAME_DATE_EST',
-             'GAME_SEQUENCE',
-             'GAME_ID',
-             'TEAM_ID',
-             'TEAM_ABBREVIATION',
-             'TEAM_CITY_NAME',
-             'TEAM_WINS_LOSSES',
-             'PTS_QTR1',
-             'PTS_QTR2',
-             'PTS_QTR3',
-             'PTS_QTR4',
-             'PTS_OT1',
-             'PTS_OT2',
-             'PTS_OT3',
-             'PTS_OT4',
-             'PTS_OT5',
-             'PTS_OT6',
-             'PTS_OT7',
-             'PTS_OT8',
-             'PTS_OT9',
-             'PTS_OT10',
-             'PTS',
-             'FG_PCT',
-             'FT_PCT',
-             'FG3_PCT',
-             'AST',
-             'REB',
-             'TOV']
+    headers: ['GAME_DATE_EST',          -- not needed but ok to keep
+             'GAME_SEQUENCE',           -- needed internally, but not on the webpage or in the postgresql db
+             'GAME_ID',                 -- keep
+             'TEAM_ID',                 -- keep, split between columns via 'GAME SEQUENCE'
+             'TEAM_ABBREVIATION',       -- keep / split
+             'TEAM_CITY_NAME',          -- keep / split
+             'TEAM_WINS_LOSSES',        -- keep / split
+             'PTS_QTR1',                -- keep / split
+             'PTS_QTR2',                -- keep / split
+             'PTS_QTR3',                -- keep / split
+             'PTS_QTR4',                -- keep / split
+             'PTS_OT1',                 -- keep / split
+             'PTS_OT2',                 -- keep / split
+             'PTS_OT3',                 -- keep / split
+             'PTS_OT4',                 -- keep / split
+             'PTS_OT5',                 -- keep / split
+             'PTS_OT6',                 -- keep / split
+             'PTS_OT7',                 -- keep / split
+             'PTS_OT8',                 -- keep / split
+             'PTS_OT9',                 -- keep / split
+             'PTS_OT10',                -- keep / split
+             'PTS',                     -- keep / split
+             'FG_PCT',                  -- keep / split
+             'FT_PCT',                  -- keep / split
+             'FG3_PCT',                 -- keep / split
+             'AST',                     -- keep / split
+             'REB',                     -- keep / split
+             'TOV']                     -- keep / split
     example: ['2018-02-25T00:00:00',
              1,
              '0021700892',

@@ -48,22 +48,26 @@ def main():
     ### call data getters to fetch data from nba.com ###
     date = datetime(2018, 2, 25)  # dev only
 
-    # fetch the Scorebaord json dump
-    scoreboard_json = Scoreboard(month=date.month, day=date.day, year=date.year).json
+    ### fetch the Scoreboard json dump
+    scoreboard = get_scoreboard(date, Scoreboard)
+
+    ### RUN ONLY ONCE ###
+    #upload_headers(scoreboard["resultSets"], range(1, 6))
 
     # check if there are games available
-    if has_games(date, scoreboard_json):
-        line_score = get_line_score(date, scoreboard_json)  # prime source for the web page and game db
-        series_standings = get_series_standings(date, scoreboard_json)  # link to the game db?
-        last_meeting = get_last_meeting()  # link to the game db
-        standings = get_conference_standings()  # only useful for the web page
+    if has_games(scoreboard):
+        line_score = get_line_score(scoreboard)  # prime source for the web page and game db
+        series_standings = get_series_standings(scoreboard)  # link to the game db?
+        last_meeting = get_last_meeting(scoreboard)  # link to the game db
+        standings = get_conference_standings(scoreboard)  # only useful for the web page
 
-        row_set = (scoreboard_json["resultSets"][1]["rowSet"])
+        row_set = (scoreboard["resultSets"][1]["rowSet"])
         # this is essentialy the daily scores layout, though it might make more sense to put it in the SQL db
         for a, h in zip(row_set[::2], row_set[1::2]):
             print(a[4], a[21], " : ", h[4], h[21])
 
     # modify the data if needed
+    pprint.pprint(line_score_formatter(line_score))
 
     # upload the data to the mongo databases
 
