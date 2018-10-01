@@ -1,0 +1,2 @@
+Swell ideas:
+1. Write the data to be inserted into the PGSQL db to a local file - basically make a list of lists of comma-separated values - and then use the COPY command in psql to insert them in bulk to the target remote db. Read up on COPY first to get the formatting downn.

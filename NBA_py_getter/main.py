@@ -51,9 +51,6 @@ def main():
     ### fetch the Scoreboard json dump
     scoreboard = get_scoreboard(date, Scoreboard)
 
-    ### RUN ONLY ONCE ###
-    #upload_headers(scoreboard["resultSets"], range(1, 6))
-
     # check if there are games available
     if has_games(scoreboard):
         line_score = get_line_score(scoreboard)  # prime source for the web page and game db
@@ -66,11 +63,15 @@ def main():
         for a, h in zip(row_set[::2], row_set[1::2]):
             print(a[4], a[21], " : ", h[4], h[21])
 
-    # modify the data if needed
-    pprint.pprint(line_score_formatter(line_score))
+        # modify the data if needed
+        modded_line_score = line_score_formatter(line_score)  # this is a tuple
 
-    # upload the data to the mongo databases
+        # upload the data to the mongo databases
+        mongo_dispatcher(data=None, db_enpoint=None)
 
+        # upload the data to postgresql databases
+        postgresql_dispatcher(data=None, db_enpoint=None
+                              )
     # dump the logs into the mongo database and local catalog
     #log_dump(log, datetime.today(), logs)
 
