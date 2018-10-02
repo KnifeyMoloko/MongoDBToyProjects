@@ -171,7 +171,99 @@ def line_score_formatter(raw_data):
                       'data': None
                       }
 
-    # the sql data schema is used for a tuple housing the postgresql data
+    # MongoDB
+    try:
+        logging.debug("Formatting line score for mongo - START")
+        # make copies of the mongodb dict template
+        away_team_scoreboard = []
+        home_team_scoreboard = []
+
+        # split the home and away team's data from raw_data, keeping the sequence of entries
+        away = raw_data[::2]
+        home = raw_data[1::2]
+
+        for team in away:
+            temp_dict = mongo_template.copy()
+            temp_dict["game_date_est"] = team[0]
+            temp_dict["game_sequence"] = team[1]
+            temp_dict["game_id"] = team[2]
+            temp_dict["team_id"] = team[3]
+            temp_dict["away_or_home"] = "away"
+            temp_dict["data"] = team[4::]
+            away_team_scoreboard.append(temp_dict)
+
+        for team in home:
+            temp_dict = mongo_template.copy()
+            temp_dict["game_date_est"] = team[0]
+            temp_dict["game_sequence"] = team[1]
+            temp_dict["game_id"] = team[2]
+            temp_dict["team_id"] = team[3]
+            temp_dict["away_or_home"] = "home"
+            temp_dict["data"] = team
+            home_team_scoreboard.append(temp_dict)
+
+        # list of dicts in [all-away-teams, all-home-teams] order. Split in 2 by len and zip for pairings
+        scoreboard_final_mongodb_flat = away_team_scoreboard + home_team_scoreboard
+
+    except Exception:
+        logging.exception("Bumped into an error while formatting line score for mongo")
+
+    """
+    # create a list [to keep order] of dict objects for every away team
+    for team in away:
+        temp_dict = {}
+        zipped_data = zip(scoreboard_line_score_headers_lower, team)  # use headers from constants
+        for zed in zipped_data:
+            temp_dict[zed[0]] = zed[1]  # use the zipped header, datum pairs as key: value
+        away_team_scoreboard.append(temp_dict)
+
+    # create a list [to keep order] of dict objects for every home team
+    for team in home:
+        temp_dict = {}
+        zipped_data = zip(scoreboard_line_score_headers_lower, team)  # use headers from constants
+        for zed in zipped_data:
+            temp_dict[zed[0]] = zed[1]  # use the zipped header, datum pairs as key: value
+        home_team_scoreboard.append(temp_dict)
+
+    # create a master dict for both away and home teams' dicts
+    scoreboard_final_mongodb = {"away": away_team_scoreboard,
+                                "home": home_team_scoreboard}
+
+    """
+
+    # PostgreSQL
+    try:
+        logging.debug("Formatting line score for PostgreSQL - START")
+        scoreboard_final_postgresql = []
+        # zip the inner lists of raw_data by 2 for away-home team pairs for every game
+        for l in zip(away, home):
+            line = l[0] + l[1]
+            # validate: each of the elements in the tuple is from the same game sequence
+            if line[1] == line[29]:  # 1 and 29 are game sequence id's in the zipped list
+                scoreboard_final_postgresql.append(line)
+            else:
+                logging.error("Bumped into an error: cannot align game sequence")
+                return ReferenceError
+
+    except Exception:
+        logging.exception("Bumped into an error while formatting line score for PostgreSQL")
+
+
+    # pack results into output tuple and return
+    try:
+        output = (scoreboard_final_mongodb_flat, scoreboard_final_postgresql)
+    except ReferenceError or ValueError or UnboundLocalError:
+        logging.exception("Bumped into an error while packing the formatting results for line score"
+                          "")
+    logging.debug("Formatting the line score data - END")
+    return output
+
+
+def mongo_dispatcher(data, db_enpoint):
+    pass
+
+
+def postgresql_dispatcher(data, db_enpoint):
     sql_data_schema = "(id serial PRIMARY KEY, " \
                      "away_game_date_est date, " \
                      "away_game_sequence integer, " \
@@ -227,84 +319,4 @@ def line_score_formatter(raw_data):
                      "home_assists integer," \
                      "home_rebounds integer," \
                      "home_turnovers integer);"
-    #TODO: Add logging calls to the monogdb and postgresql parts here
-    # MongoDB
-    # make copies of the mongodb dict template
-    away_team_scoreboard = []
-    home_team_scoreboard = []
-
-    # split the home and away team's data from raw_data, keeping the sequence of entries
-    away = raw_data[::2]
-    home = raw_data[1::2]
-
-    for team in away:
-        temp_dict = mongo_template.copy()
-        temp_dict["game_date_est"] = team[0]
-        temp_dict["game_sequence"] = team[1]
-        temp_dict["game_id"] = team[2]
-        temp_dict["team_id"] = team[3]
-        temp_dict["away_or_home"] = "away"
-        temp_dict["data"] = team[4::]
-        away_team_scoreboard.append(temp_dict)
-
-    for team in home:
-        temp_dict = mongo_template.copy()
-        temp_dict["game_date_est"] = team[0]
-        temp_dict["game_sequence"] = team[1]
-        temp_dict["game_id"] = team[2]
-        temp_dict["team_id"] = team[3]
-        temp_dict["away_or_home"] = "home"
-        temp_dict["data"] = team
-        home_team_scoreboard.append(temp_dict)
-
-    # list of dicts in [all-away-teams, all-home-teams] order. Split in 2 by len and zip for pairings
-    scoreboard_final_mongodb_flat = away_team_scoreboard + home_team_scoreboard
-
-    """
-    # create a list [to keep order] of dict objects for every away team
-    for team in away:
-        temp_dict = {}
-        zipped_data = zip(scoreboard_line_score_headers_lower, team)  # use headers from constants
-        for zed in zipped_data:
-            temp_dict[zed[0]] = zed[1]  # use the zipped header, datum pairs as key: value
-        away_team_scoreboard.append(temp_dict)
-
-    # create a list [to keep order] of dict objects for every home team
-    for team in home:
-        temp_dict = {}
-        zipped_data = zip(scoreboard_line_score_headers_lower, team)  # use headers from constants
-        for zed in zipped_data:
-            temp_dict[zed[0]] = zed[1]  # use the zipped header, datum pairs as key: value
-        home_team_scoreboard.append(temp_dict)
-
-    # create a master dict for both away and home teams' dicts
-    scoreboard_final_mongodb = {"away": away_team_scoreboard,
-                                "home": home_team_scoreboard}
-
-    """
-
-    # PostgreSQL
-    scoreboard_final_postgresql = []
-    # zip the inner lists of raw_data by 2 for away-home team pairs for every game
-    for l in zip(away, home):
-        line = l[0] + l[1]
-        # validate: each of the elements in the tuple is from the same game sequence
-        if line[1] == line[29]:  # 1 and 29 are game sequence id's in the zipped list
-            scoreboard_final_postgresql.append(line)
-        else:
-            logging.error("Bumped into an error: cannot align game sequence")
-            return ReferenceError
-
-
-    # pack results into output tuple and return
-    output = (scoreboard_final_mongodb_flat, scoreboard_final_postgresql)
-    logging.debug("Formatting the line score data - END")
-    return output
-
-
-def mongo_dispatcher(data, db_enpoint):
-    pass
-
-
-def postgresql_dispatcher(data, db_enpoint):
     pass
