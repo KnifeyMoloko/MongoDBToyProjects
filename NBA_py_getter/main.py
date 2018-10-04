@@ -45,11 +45,25 @@ def main():
     games = mongo_client.nba.games
     logs = mongo_client.nba.logs
 
+    ### if there are no teams in the teams database, upload the teams there ###
+    # check if document count in nba.teams is smaller than the return for nba_py.team.TeamList
+    team_list = team.TeamList().json['resultSets'][0]["rowSet"]
+    # return a list of current NBA teams
+    team_list_filtered = [i for i in team_list if i[4] is not None]
+
+    if teams.count_documents(filter={}) < len(team_list_filtered):
+        print("oh oh")
+        #TODO: How to make this robust? I don't want to inadvertently delete the teams collection!
+        #TODO: Check if the team ids line up with what line_score gives us
+        pprint.pprint(format_team_list(team_list_filtered))
+
+
     ### call data getters to fetch data from nba.com ###
     date = datetime(2018, 2, 25)  # dev only
 
     ### fetch the Scoreboard json dump
     scoreboard = get_scoreboard(date, Scoreboard)
+
 
     # check if there are games available
     if has_games(scoreboard):

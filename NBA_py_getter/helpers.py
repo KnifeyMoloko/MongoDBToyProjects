@@ -320,3 +320,18 @@ def postgresql_dispatcher(data, db_enpoint):
                      "home_rebounds integer," \
                      "home_turnovers integer);"
     pass
+
+
+def format_team_list(team_list):
+    """
+
+    :param team_list:
+    :return:
+    """
+    formatted_list = []
+
+    for row in team_list:
+        new_dict = {"team_id": row[1],
+                    "team_abbreviation": row[4]}
+        formatted_list.append(new_dict)
+    return formatted_list
