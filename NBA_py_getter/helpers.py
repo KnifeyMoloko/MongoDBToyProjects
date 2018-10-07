@@ -338,7 +338,11 @@ def format_team_list(team_list):
 
 # validators
 
-def mongo_collection_validator(mono_collection, template_data, comparison_func, count_validation, item_validaton):
+def mongo_collection_validator(mongo_collection, template_data,
+                               mongo_param_to_validate,
+                               template_param_to_validate,
+                               count_validation,
+                               item_validation):
     """
     Performs either one or two validation actions depending on the flags
     passed in the params:
@@ -348,24 +352,40 @@ def mongo_collection_validator(mono_collection, template_data, comparison_func, 
     (2) when item validation is True, it performs the comparison_func
     on each item from both mongo_collection and template_data. (2) will
     only run if (1) returns True.
-    This function is designed to test the outermost layer of a collection
-    against a template or schema. It will only inform the user if the
-    collection has N number of items and those items meet a given criteria.
-    Example:
-    collection = {{"id": 1, "name": "Mark"},
-                {"id": 2, "name": "Michael"},
-                {"id": 3, "name": "Mary"}}
-    template_data = ["Mark", "Michael", "Mary"]
-    comparison_func (lambda) = x: x = y["name"]
-    => Validator should return True, since the number of items is equal
-    and the ["name"] value of the collection items is identical to the
-    value of the template_data items.
-    :param mono_collection: mongo_db collection
+
+    :param mongo_collection: mongo_db collection
     :param template_data: data structure to be compared
-    :param comparison_func: a comparison function to be used (can be lambda)
+    :param mongo_param_to_validate: string mongo param to use in the item check
+    :param template_param_to_validate: string template param to use in the item check
     :param count_validation: boolean flag
-    :param item_validaton: boolean flag
+    :param item_validation: boolean flag
     :return: boolean flag
     """
-    output = comparison_func(mono_collection, template_data)
-    return False
+    logging.info("Validating mongo data - START")
+    count_flag = False
+    item_flag = False
+
+    # count validation
+    if count_validation:
+        if mongo_collection.count_documents({}) == len(template_data):
+            count_flag = True
+            logging.debug("Validating mongo data - count validation passed.")
+        else:
+            logging.warning("Validating mongo data - count validation failed! - END")
+            return False
+
+
+    # item validation
+    for i in template_data:
+        if mongo_collection.find_one({mongo_param_to_validate: i[template_param_to_validate]}) is None:
+            print("Here:", mongo_collection.find_one({mongo_param_to_validate: i[template_param_to_validate]}))
+            item_flag = False
+            logging.warning("Validating mongo data - item validation failed! - END")
+            return False
+        else:
+            logging.debug("Validating mongo data - item validation passed.")
+            pass
+
+    item_flag = True
+    logging.info("Validating mongo data - all validations passed - END.")
+    return count_flag and item_flag

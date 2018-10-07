@@ -52,11 +52,14 @@ def main():
     # return a list of current NBA teams
     #team_list_filtered = [i for i in team_list if i[4] is not None]
 
-    if teams.count_documents(filter={}) < len(nba_teams):
-        print("oh oh")
+    if teams.find_one({}) is None:
+        #TODO: if running for the first time, this should seed the collection, if not and it returnds True, it's bad
+        raise LookupError
+    elif mongo_collection_validator(teams, nba_teams, "team_id", "team_id",  True, True):
+        pass
         #TODO: How to make this robust? I don't want to inadvertently delete the teams collection!
-        #TODO: Check if the team ids line up with what line_score gives us
-        pprint.pprint(len(nba_teams))
+    else:
+        raise LookupError
 
     ### call data getters to fetch data from nba.com ###
     date = datetime(2018, 2, 25)  # dev only
