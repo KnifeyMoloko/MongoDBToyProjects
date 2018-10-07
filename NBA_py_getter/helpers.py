@@ -335,3 +335,37 @@ def format_team_list(team_list):
                     "team_abbreviation": row[4]}
         formatted_list.append(new_dict)
     return formatted_list
+
+# validators
+
+def mongo_collection_validator(mono_collection, template_data, comparison_func, count_validation, item_validaton):
+    """
+    Performs either one or two validation actions depending on the flags
+    passed in the params:
+    (1) when count_validation is True, it counts the number of items in
+    the mongo_collection and compares to the number of items in the
+    template_data structure.
+    (2) when item validation is True, it performs the comparison_func
+    on each item from both mongo_collection and template_data. (2) will
+    only run if (1) returns True.
+    This function is designed to test the outermost layer of a collection
+    against a template or schema. It will only inform the user if the
+    collection has N number of items and those items meet a given criteria.
+    Example:
+    collection = {{"id": 1, "name": "Mark"},
+                {"id": 2, "name": "Michael"},
+                {"id": 3, "name": "Mary"}}
+    template_data = ["Mark", "Michael", "Mary"]
+    comparison_func (lambda) = x: x = y["name"]
+    => Validator should return True, since the number of items is equal
+    and the ["name"] value of the collection items is identical to the
+    value of the template_data items.
+    :param mono_collection: mongo_db collection
+    :param template_data: data structure to be compared
+    :param comparison_func: a comparison function to be used (can be lambda)
+    :param count_validation: boolean flag
+    :param item_validaton: boolean flag
+    :return: boolean flag
+    """
+    output = comparison_func(mono_collection, template_data)
+    return False

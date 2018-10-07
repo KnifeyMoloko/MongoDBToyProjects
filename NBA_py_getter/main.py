@@ -12,6 +12,7 @@ Date: 08.17.2018 13:19"""
 
 #imports
 import pymongo
+from pymongo import collection
 import json
 import logging
 import pprint
@@ -19,7 +20,7 @@ from logging import config as log_config
 from datetime import datetime
 from pathlib import Path
 from nba_py import constants, game, player, team, Scoreboard
-from constants import log, logger_root_config
+from constants import log, logger_root_config, nba_teams
 from helpers import *
 
 
@@ -47,16 +48,15 @@ def main():
 
     ### if there are no teams in the teams database, upload the teams there ###
     # check if document count in nba.teams is smaller than the return for nba_py.team.TeamList
-    team_list = team.TeamList().json['resultSets'][0]["rowSet"]
+    #team_list = team.TeamList().json['resultSets'][0]["rowSet"]
     # return a list of current NBA teams
-    team_list_filtered = [i for i in team_list if i[4] is not None]
+    #team_list_filtered = [i for i in team_list if i[4] is not None]
 
-    if teams.count_documents(filter={}) < len(team_list_filtered):
+    if teams.count_documents(filter={}) < len(nba_teams):
         print("oh oh")
         #TODO: How to make this robust? I don't want to inadvertently delete the teams collection!
         #TODO: Check if the team ids line up with what line_score gives us
-        pprint.pprint(format_team_list(team_list_filtered))
-
+        pprint.pprint(len(nba_teams))
 
     ### call data getters to fetch data from nba.com ###
     date = datetime(2018, 2, 25)  # dev only
@@ -84,8 +84,8 @@ def main():
         mongo_dispatcher(data=None, db_enpoint=None)
 
         # upload the data to postgresql databases
-        postgresql_dispatcher(data=None, db_enpoint=None
-                              )
+        postgresql_dispatcher(data=None, db_enpoint=None)
+
     # dump the logs into the mongo database and local catalog
     #log_dump(log, datetime.today(), logs)
 
