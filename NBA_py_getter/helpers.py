@@ -338,7 +338,8 @@ def format_team_list(team_list):
 
 # validators
 
-def mongo_collection_validator(mongo_collection, template_data,
+
+def mongo_collection_validator (mongo_collection, template_data,
                                mongo_param_to_validate,
                                template_param_to_validate,
                                count_validation,
@@ -377,6 +378,7 @@ def mongo_collection_validator(mongo_collection, template_data,
 
     # item validation
     for i in template_data:
+        # cross-check each document in mongo collection against template data, by provided params
         if mongo_collection.find_one({mongo_param_to_validate: i[template_param_to_validate]}) is None:
             print("Here:", mongo_collection.find_one({mongo_param_to_validate: i[template_param_to_validate]}))
             item_flag = False
@@ -389,3 +391,20 @@ def mongo_collection_validator(mongo_collection, template_data,
     item_flag = True
     logging.info("Validating mongo data - all validations passed - END.")
     return count_flag and item_flag
+
+
+def seed_teams(mongo_collcection, team_data):
+    """
+    :param mongo_collcection: mongo collection to seed with data
+    :param team_data: data iterable to be inserted
+    :return: result of a insert_many() func on the mongo_collection
+    """
+    logging.info("Seeding mongo collection with constants team data - START")
+    try:
+        mongo_collcection.insert_many(team_data)
+    except Exception:
+        logging.exception("Bumped into an error while seeding mono collection with team data")
+        return False
+
+    logging.info("Seeding mongo collection with constants team data - END")
+    return True

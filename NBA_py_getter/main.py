@@ -25,6 +25,9 @@ from helpers import *
 
 
 def main():
+    ### get environment variables if any ###
+    first_run = False
+
     ### set up the Mongo client ###
 
     mongo_client = pymongo.mongo_client.MongoClient()
@@ -53,9 +56,11 @@ def main():
     #team_list_filtered = [i for i in team_list if i[4] is not None]
 
     if teams.find_one({}) is None:
-        #TODO: if running for the first time, this should seed the collection, if not and it returnds True, it's bad
-        raise LookupError
-    elif mongo_collection_validator(teams, nba_teams, "team_id", "team_id",  True, True):
+        if first_run is True:
+            seed_teams(teams, nba_teams)  # this should ony run on the first run TODO: take a env argv for a first run
+        else:
+            raise LookupError
+    elif mongo_collection_validator(teams, nba_teams, "_id", "_id",  True, True):
         pass
         #TODO: How to make this robust? I don't want to inadvertently delete the teams collection!
     else:
