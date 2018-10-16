@@ -62,7 +62,6 @@ def main():
             raise LookupError
     elif mongo_collection_validator(teams, nba_teams, "_id", "_id",  True, True):
         pass
-        #TODO: How to make this robust? I don't want to inadvertently delete the teams collection!
     else:
         raise LookupError
 
@@ -80,13 +79,16 @@ def main():
         last_meeting = get_last_meeting(scoreboard)  # link to the game db
         standings = get_conference_standings(scoreboard)  # only useful for the web page
 
+        """
         row_set = (scoreboard["resultSets"][1]["rowSet"])
         # this is essentialy the daily scores layout, though it might make more sense to put it in the SQL db
         for a, h in zip(row_set[::2], row_set[1::2]):
             print(a[4], a[21], " : ", h[4], h[21])
+        """
 
         # modify the data if needed
         modded_line_score = line_score_formatter(line_score)  # this is a tuple
+        add_games_from_line_score(teams, modded_line_score[0])
 
         # upload the data to the mongo databases
         mongo_dispatcher(data=None, db_enpoint=None)
@@ -95,7 +97,7 @@ def main():
         postgresql_dispatcher(data=None, db_enpoint=None)
 
     # dump the logs into the mongo database and local catalog
-    #log_dump(log, datetime.today(), logs)
+    log_dump(log, datetime.today(), logs)
 
 
     #TODO: decide on the data model that I want to use: what to keep and in what form
