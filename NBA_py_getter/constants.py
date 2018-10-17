@@ -10,6 +10,7 @@ season = "2017-2018"
 log = StringIO()  # container for logs
 runtime_timestamp = datetime.today()
 
+
 # Logger object configuration
 logger_root_config = {'version': 1,
                       'disable_existing_loggers': False,

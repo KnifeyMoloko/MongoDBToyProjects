@@ -3,6 +3,28 @@ import logging
 
 #### helper functions for NBA_py_getter
 
+def parse_argv(argv_list):
+    """
+    Count optional positional params for the script and parse them to modify
+    the runtime behavior of main using the flags in main.
+    :param argv_list: argv list imported from sys
+    :return: [first_run, no_mongo, no_postgre, run_date]
+    """
+    first_run = False
+    no_mongo = False
+    no_postgre = False
+    run_date = None
+
+    output = [first_run, no_mongo, no_postgre, run_date]
+    counter = 1
+
+    while counter <= len(output):
+        output[counter - 1] = argv_list[counter]
+        counter = counter + 1
+
+    return output
+
+
 def log_dump(log_container, timestamp, mongo_instance):
     """
     Dumps the logs collected in the log_container list locally and adds them
@@ -18,7 +40,7 @@ def log_dump(log_container, timestamp, mongo_instance):
 
     # define database entry using the Logger's stream handler
     db_entry = {"name": "log_" + str(timestamp),
-                "output": log_container.getvalue().format()}
+                "output": log_container.getvalue()}
     # add log output to database
     try:
         mongo_instance.insert_one(db_entry)
@@ -40,7 +62,7 @@ def has_games(scoreboard_json):
     """
     logging.debug("Game availability check - START")
     try:
-        if scoreboard_json["resultSets"][6]["rowSet"] is not []:
+        if scoreboard_json is not None and scoreboard_json["resultSets"][6]["rowSet"] is not []:
             logging.debug("Game availability check - END")
             return True
     except Exception:
@@ -392,7 +414,7 @@ def add_games_from_line_score(mongo_collection, line_score_data):
         logging.exception("Bumped into an error while getting team_id x game_id tuples.")
         return False
 
-    logging.info("Adding games from line score to teams - START")
+    logging.info("Adding games from line score to teams - END")
     return True
 
 # validators

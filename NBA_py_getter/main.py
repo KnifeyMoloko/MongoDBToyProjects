@@ -12,24 +12,38 @@ Date: 08.17.2018 13:19"""
 
 #imports
 import pymongo
-from pymongo import collection
 import json
 import logging
 import pprint
+from sys import argv
 from logging import config as log_config
+from dateutil import parser
 from datetime import datetime
 from pathlib import Path
 from nba_py import constants, game, player, team, Scoreboard
-from constants import log, logger_root_config, nba_teams
+from constants import log, logger_root_config, nba_teams, runtime_timestamp
 from helpers import *
 
 
 def main():
     ### get environment variables if any ###
-    first_run = False
+    parsed_argv = parse_argv(argv)
+
+    # set runtime flags
+    first_run = bool(parsed_argv[0])
+    no_mongo = bool(parsed_argv[1])
+    no_postgre = bool(parsed_argv[2])
+    run_date = parsed_argv[3]
+    print(parsed_argv)
+
+    # set run date
+    if run_date is not None:
+        run_date = parser.parse(run_date)
+    else:
+        run_date = runtime_timestamp
 
     ### set up the Mongo client ###
-
+    #TODO: decidde if the mongo checks should also include the service session and db path
     mongo_client = pymongo.mongo_client.MongoClient()
 
     ### set up pathlib instance for local log file manipulations ###
@@ -49,16 +63,11 @@ def main():
     games = mongo_client.nba.games
     logs = mongo_client.nba.logs
 
-    ### if there are no teams in the teams database, upload the teams there ###
-    # check if document count in nba.teams is smaller than the return for nba_py.team.TeamList
-    #team_list = team.TeamList().json['resultSets'][0]["rowSet"]
-    # return a list of current NBA teams
-    #team_list_filtered = [i for i in team_list if i[4] is not None]
-
     if teams.find_one({}) is None:
         if first_run is True:
-            seed_teams(teams, nba_teams)  # this should ony run on the first run TODO: take a env argv for a first run
+            seed_teams(teams, nba_teams)
         else:
+            print(first_run is True)
             raise LookupError
     elif mongo_collection_validator(teams, nba_teams, "_id", "_id",  True, True):
         pass
@@ -66,7 +75,8 @@ def main():
         raise LookupError
 
     ### call data getters to fetch data from nba.com ###
-    date = datetime(2018, 2, 25)  # dev only
+    date = run_date
+    logging.info("Run date is: " + str(run_date))
 
     ### fetch the Scoreboard json dump
     scoreboard = get_scoreboard(date, Scoreboard)
@@ -98,7 +108,6 @@ def main():
 
     # dump the logs into the mongo database and local catalog
     log_dump(log, datetime.today(), logs)
-
 
     #TODO: decide on the data model that I want to use: what to keep and in what form
 
