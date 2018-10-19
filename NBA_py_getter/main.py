@@ -30,16 +30,25 @@ def main():
     parsed_argv = parse_argv(argv)
 
     # set runtime flags
+    logging.info("Setting runtime flags - START")
     first_run = bool(parsed_argv[0])
     no_mongo = bool(parsed_argv[1])
     no_postgre = bool(parsed_argv[2])
     run_date = parsed_argv[3]
-    print(parsed_argv)
+    logging.info("Setting runtime flags: ", str(parsed_argv))
+    logging.info("Setting runtime flags - END.")
 
     # set run date
+
+    # run_date will be None if no params are provided or to few are provided at runtime
     if run_date is not None:
-        run_date = parser.parse(run_date)
+        try:
+            run_date = parser.parse(run_date)  # should parse most reasonable date formats
+        except Exception:
+            logging.exception("Bumped into a problem while parsing run date!")
+            raise ValueError
     else:
+        # use the date of runtime as run_date
         run_date = runtime_timestamp
 
     ### set up the Mongo client ###

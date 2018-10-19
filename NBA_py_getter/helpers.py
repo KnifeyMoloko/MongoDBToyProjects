@@ -10,6 +10,7 @@ def parse_argv(argv_list):
     :param argv_list: argv list imported from sys
     :return: [first_run, no_mongo, no_postgre, run_date]
     """
+    logging.info("Parsing environment runtime arguments - START")
     first_run = False
     no_mongo = False
     no_postgre = False
@@ -17,11 +18,13 @@ def parse_argv(argv_list):
 
     output = [first_run, no_mongo, no_postgre, run_date]
     counter = 1
-
-    while counter <= len(output):
-        output[counter - 1] = argv_list[counter]
-        counter = counter + 1
-
+    try:
+        while counter <= len(output):
+            output[counter - 1] = argv_list[counter]
+            counter = counter + 1
+    except Exception:
+        logging.exception("Bumped into a problem with putting the env params into a list!")
+    logging.info("Parsing environment runtime arguments - END")
     return output
 
 
@@ -148,7 +151,7 @@ def get_conference_standings(scoreboard_json):
     :param scoreboard_json: nba_py Scoreboard JSON dump
     :return: a dict containing west and east conference data for a given date
     """
-    logging.debug("Fetching last meetings - START")
+    logging.debug("Fetching last meetings - END")
     try:
         east_standings = scoreboard_json["resultSets"][4]["rowSet"]
         west_standings = scoreboard_json["resultSets"][5]["rowSet"]
