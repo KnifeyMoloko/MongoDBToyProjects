@@ -1,7 +1,8 @@
 import logging
 
 
-#### helper functions for NBA_py_getter
+# helper functions for NBA_py_getter
+
 
 def parse_argv(argv_list):
     """
@@ -15,8 +16,10 @@ def parse_argv(argv_list):
     no_mongo = False
     no_postgre = False
     run_date = None
+    is_season_run = False
+    season_run_season = None
 
-    output = [first_run, no_mongo, no_postgre, run_date]
+    output = [first_run, no_mongo, no_postgre, run_date, is_season_run, season_run_season]
     counter = 1
     try:
         while counter <= len(output):
@@ -53,7 +56,8 @@ def log_dump(log_container, timestamp, mongo_instance):
         logging.exception("Bumped into an error while dumping log!")
 
 
-### has 'x' checks
+# has 'x' checks
+
 
 def has_games(scoreboard_json):
     """
@@ -73,7 +77,8 @@ def has_games(scoreboard_json):
                           "availability")
 
 
-### data getters
+# data getters
+
 
 def get_data_headers(data):
     """
@@ -162,21 +167,54 @@ def get_conference_standings(scoreboard_json):
         logging.exception("Bumped into an error while getting conference standings")
 
 
-### data manipulation funcs
+def get_team_game_logs(team_id, season, nba_py_module):
+    """
+    Returns a season's worth of game logs for a single NBA team.
+    :param team_id: NBA teams id
+    :param season: season identifier in the format "YYYY-YY", e.g. '2017-18'
+    :param nba_py_module: TeamGameLogs class from the teams module of nba_py
+    :return: teamgamelog dict with all the logs for games in the season
+    """
+    try:
+        logging.debug("Trying to get team game log.")
+        output_json = nba_py_module(team_id, season).json
+        logging.debug("Got team game log. Returning output.")
+        return output_json
+    except Exception:
+        logging.exception("Bumped into exception while getting game log")
 
-def upload_headers(nba_py_package, indices_to_process):
+
+def get_season_nba_game_logs(team_list, season, nba_py_module):
     """
-    Recipe:
-        upload_headers(scoreboard["resultSets"], range(0, len(scoreboard["resultSets"])))
-    :param nba_py_package:
-    :param indices_to_process:
-    :return:
+    Getter function for fetching the game logs for multiple NBA teams.
+    :param team_list: list of nba teams with their ids
+    :param season: identifier for the season for which to fetch logs, format: 'YYYY-YY', e.g. '2017-18'
+    :param nba_py_module: TeamGameLogs class from teams module in nba_py
+    :return: list of dict objects containing game logs for each team
     """
-    package = nba_py_package
-    ind = indices_to_process
-    for i in ind:
-        print(nba_py_package[i]["name"])
-        print(nba_py_package[i]["headers"])
+    logging.debug("Getting NBA game logs (multiple teams) - END")
+    output = []
+    try:
+        for t in team_list:
+            output.append(get_team_game_logs(t['_id'], season, nba_py_module))
+        logging.debug("Getting NBA game logs (multiple teams) - END")
+    except Exception:
+        logging.exception("Bumped into a problem when getting NBA game logs (multiple teams)")
+    print(output)
+    return output
+
+
+def season_run(season, mongo_collection):
+    # imports
+    from constants import nba_teams
+    from nba_py.team import TeamGameLogs
+
+    # get the team_logs
+
+    games = get_season_nba_game_logs(nba_teams, season, TeamGameLogs)
+
+
+# data manipulation funcs
 
 
 def line_score_formatter(raw_data):
@@ -283,6 +321,24 @@ def line_score_formatter(raw_data):
     return output
 
 
+def format_team_list(team_list):
+    """
+
+    :param team_list:
+    :return:
+    """
+    formatted_list = []
+
+    for row in team_list:
+        new_dict = {"team_id": row[1],
+                    "team_abbreviation": row[4]}
+        formatted_list.append(new_dict)
+    return formatted_list
+
+
+# dispatch funcs
+
+
 def mongo_dispatcher(data, db_enpoint):
     pass
 
@@ -346,21 +402,6 @@ def postgresql_dispatcher(data, db_enpoint):
     pass
 
 
-def format_team_list(team_list):
-    """
-
-    :param team_list:
-    :return:
-    """
-    formatted_list = []
-
-    for row in team_list:
-        new_dict = {"team_id": row[1],
-                    "team_abbreviation": row[4]}
-        formatted_list.append(new_dict)
-    return formatted_list
-
-
 def seed_teams(mongo_collcection, team_data):
     """
     :param mongo_collcection: mongo collection to seed with data
@@ -420,7 +461,10 @@ def add_games_from_line_score(mongo_collection, line_score_data):
     logging.info("Adding games from line score to teams - END")
     return True
 
+
 # validators
+
+
 def mongo_collection_validator (mongo_collection, template_data,
                                mongo_param_to_validate,
                                template_param_to_validate,

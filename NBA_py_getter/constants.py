@@ -6,7 +6,7 @@ from io import StringIO
 
 # global variables
 
-season = "2017-2018"
+season = "2017-18"
 log = StringIO()  # container for logs
 runtime_timestamp = datetime.today()
 

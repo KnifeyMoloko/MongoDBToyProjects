@@ -35,18 +35,22 @@ def main():
     no_mongo = bool(parsed_argv[1])
     no_postgre = bool(parsed_argv[2])
     run_date = parsed_argv[3]
+    is_season_run = bool(parsed_argv[4])
+    season_run_season = parsed_argv[5]
     logging.info("Setting runtime flags: ", str(parsed_argv))
     logging.info("Setting runtime flags - END.")
 
     # set run date
 
     # run_date will be None if no params are provided or to few are provided at runtime
-    if run_date is not None:
+    if run_date is not None and not is_season_run:
         try:
             run_date = parser.parse(run_date)  # should parse most reasonable date formats
         except Exception:
             logging.exception("Bumped into a problem while parsing run date!")
             raise ValueError
+    elif is_season_run:
+        run_data = "Season run: ".join(str(season_run_season))
     else:
         # use the date of runtime as run_date
         run_date = runtime_timestamp
@@ -71,6 +75,12 @@ def main():
     teams = mongo_client.nba.teams
     games = mongo_client.nba.games
     logs = mongo_client.nba.logs
+
+    # check if the season run option is
+    if is_season_run:
+        season_run_db = mongo_client.nba.prev_season
+        season_run(season_run_season, season_run_db)
+        return 0
 
     if teams.find_one({}) is None:
         if first_run is True:
@@ -107,7 +117,7 @@ def main():
 
         # modify the data if needed
         modded_line_score = line_score_formatter(line_score)  # this is a tuple
-        add_games_from_line_score(teams, modded_line_score[0])
+        #add_games_from_line_score(teams, modded_line_score[0])
 
         # upload the data to the mongo databases
         mongo_dispatcher(data=None, db_enpoint=None)
@@ -119,6 +129,7 @@ def main():
     log_dump(log, datetime.today(), logs)
 
     #TODO: decide on the data model that I want to use: what to keep and in what form
+
 
 if __name__ == "__main__":
     main()

@@ -580,4 +580,33 @@ rowSet:                     [['00', 1610612749, '1968', '2018', 'MIL'],
                             ['00', 1610610032, '1946', '1948', None],
                             ['00', 1610610035, '1946', '1946', None]]}]}
 
+2. name: TeamGameLogs
+headers: 'Team_ID',
+         'Game_ID',
+         'GAME_DATE',
+         'MATCHUP',
+         'WL',
+         'W',
+         'L',
+         'W_PCT',
+         'MIN',
+         'FGM',
+         'FGA',
+         'FG_PCT',
+         'FG3M',
+         'FG3A',
+         'FG3_PCT',
+         'FTM',
+         'FTA',
+         'FT_PCT',
+         'OREB',
+         'DREB',
+         'REB',
+         'AST',
+         'STL',
+         'BLK',
+         'TOV',
+         'PF',
+         'PTS']
+
 
