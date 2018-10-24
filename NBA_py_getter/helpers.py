@@ -4,7 +4,7 @@ import logging
 # helper functions for NBA_py_getter
 
 
-# decorators
+# base decorators
 
 
 def basic_log_decorator(func):
@@ -16,6 +16,7 @@ def basic_log_decorator(func):
             return output
         except Exception:
             logging.exception("Bumped into trouble in " + func.__name__)
+            return 1
     return wrapper
 
 
@@ -101,6 +102,85 @@ def has_games(scoreboard_json):
     if scoreboard_json is not None and scoreboard_json["resultSets"][6]["rowSet"] is not []:
         logging.debug("Game availability check - END")
         return True
+
+    # validators
+
+
+@basic_log_decorator
+def season_game_logs_validator(func):
+    def wrapper(*args, **kwargs):
+
+        # input
+        logging.debug("Getting validation input from func")
+        input_data = func(*args, **kwargs)
+
+        # size validation
+        logging.debug("Comparing template size to input size")
+        size_val_param = len(input_data[1])
+        size_val_compare = len(input_data[0])
+        assert size_val_param == size_val_compare, "Size mismatch in assertion!"
+
+        # structure validation
+        logging.debug("Comparing input structure to template structure")
+        fetched_teams_ids = [i[0][0] for i in input_data[0]]
+        template_ids = [j['_id'] for j in input_data[1]]
+        assert fetched_teams_ids == template_ids
+
+        return input_data[0]
+    return wrapper
+
+
+def mongo_collection_validator(mongo_collection, template_data,
+                               mongo_param_to_validate,
+                               template_param_to_validate,
+                               count_validation,
+                               item_validation):
+    """
+    Performs either one or two validation actions depending on the flags
+    passed in the params:
+    (1) when count_validation is True, it counts the number of items in
+    the mongo_collection and compares to the number of items in the
+    template_data structure.
+    (2) when item validation is True, it performs the comparison_func
+    on each item from both mongo_collection and template_data. (2) will
+    only run if (1) returns True.
+
+    :param mongo_collection: mongo_db collection
+    :param template_data: data structure to be compared
+    :param mongo_param_to_validate: string mongo param to use in the item check
+    :param template_param_to_validate: string template param to use in the item check
+    :param count_validation: boolean flag
+    :param item_validation: boolean flag
+    :return: boolean flag
+    """
+    logging.info("Validating mongo data - START")
+    count_flag = False
+    item_flag = False
+
+    # count validation
+    if count_validation:
+        if mongo_collection.count_documents({}) == len(template_data):
+            count_flag = True
+            logging.debug("Validating mongo data - count validation passed.")
+        else:
+            logging.warning("Validating mongo data - count validation failed! - END")
+            return False
+
+    # item validation
+    for i in template_data:
+        # cross-check each document in mongo collection against template data, by provided params
+        if mongo_collection.find_one({mongo_param_to_validate: i[template_param_to_validate]}) is None:
+            print("Here:", mongo_collection.find_one({mongo_param_to_validate: i[template_param_to_validate]}))
+            item_flag = False
+            logging.warning("Validating mongo data - item validation failed! - END")
+            return False
+        else:
+            logging.debug("Validating mongo data - item validation passed.")
+            pass
+
+    item_flag = True
+    logging.info("Validating mongo data - all validations passed - END.")
+    return count_flag and item_flag
 
 
 # data getters
@@ -195,6 +275,7 @@ def get_conference_standings(scoreboard_json):
 
 @get_row_set_decorator
 @get_result_sets_decorator
+@basic_log_decorator
 def get_team_game_logs(team_id, season, nba_py_module):
     """
     Returns a season's worth of game logs for a single NBA team.
@@ -203,47 +284,36 @@ def get_team_game_logs(team_id, season, nba_py_module):
     :param nba_py_module: TeamGameLogs class from the teams module of nba_py
     :return: teamgamelog dict with all the logs for games in the season
     """
-    try:
-        logging.debug("Trying to get team game log.")
-        output_json = nba_py_module(team_id, season).json
-        logging.debug("Got team game log. Returning output.")
-        return output_json
-    except Exception:
-        logging.exception("Bumped into exception while getting game log")
+    logging.debug("Trying to get team game log for team id:" + str(team_id))
+    output_json = nba_py_module(team_id, season).json
+    return output_json
 
 
-
+@basic_log_decorator
 def get_season_nba_game_logs(team_list, season, nba_py_module):
     """
     Getter function for fetching the game logs for multiple NBA teams.
-    :param team_list: list of nba teams with their ids
+    :param team_list: list of nba teams as dicts, with their ids under key: _id
     :param season: identifier for the season for which to fetch logs, format: 'YYYY-YY', e.g. '2017-18'
     :param nba_py_module: TeamGameLogs class from teams module in nba_py
     :return: list of dict objects containing game logs for each team
     """
-    logging.debug("Getting NBA game logs (multiple teams) - END")
-    output = []
-    try:
-        for t in team_list:
-            output.append(get_team_game_logs(t['_id'], season, nba_py_module))
-        logging.debug("Getting NBA game logs (multiple teams) - END")
-    except Exception:
-        logging.exception("Bumped into a problem when getting NBA game logs (multiple teams)")
+    output = [get_team_game_logs(t['_id'], season, nba_py_module) for t in team_list]
     return output
 
 
+@season_game_logs_validator
 @basic_log_decorator
 def get_season_run(season, mongo_collection, nba_py_module):
     # imports
     from constants import nba_teams
-    from pprint import pprint
 
     nba_py_mod = nba_py_module
 
     # get the team_logs
 
     games = get_season_nba_game_logs(nba_teams, season, nba_py_mod.TeamGameLogs)
-    pprint(games)
+    return games, nba_teams
 
 
 # data manipulation funcs
@@ -368,6 +438,11 @@ def format_team_list(team_list):
     return formatted_list
 
 
+@basic_log_decorator
+def pack_season_team_logs(game_logs):
+    for i in game_logs:
+        pass
+
 # dispatch funcs
 
 
@@ -434,6 +509,7 @@ def postgresql_dispatcher(data, db_enpoint):
     pass
 
 
+@basic_log_decorator
 def seed_teams(mongo_collcection, team_data):
     """
     :param mongo_collcection: mongo collection to seed with data
@@ -445,14 +521,7 @@ def seed_teams(mongo_collcection, team_data):
     for td in team_data:
         td['games'] = []
 
-    logging.info("Seeding mongo collection with constants team data - START")
-    try:
-        mongo_collcection.insert_many(team_data)
-    except Exception:
-        logging.exception("Bumped into an error while seeding mono collection with team data")
-        return False
-
-    logging.info("Seeding mongo collection with constants team data - END")
+    mongo_collcection.insert_many(team_data)
     return True
 
 
@@ -494,59 +563,5 @@ def add_games_from_line_score(mongo_collection, line_score_data):
     return True
 
 
-# validators
 
-
-def mongo_collection_validator (mongo_collection, template_data,
-                               mongo_param_to_validate,
-                               template_param_to_validate,
-                               count_validation,
-                               item_validation):
-    """
-    Performs either one or two validation actions depending on the flags
-    passed in the params:
-    (1) when count_validation is True, it counts the number of items in
-    the mongo_collection and compares to the number of items in the
-    template_data structure.
-    (2) when item validation is True, it performs the comparison_func
-    on each item from both mongo_collection and template_data. (2) will
-    only run if (1) returns True.
-
-    :param mongo_collection: mongo_db collection
-    :param template_data: data structure to be compared
-    :param mongo_param_to_validate: string mongo param to use in the item check
-    :param template_param_to_validate: string template param to use in the item check
-    :param count_validation: boolean flag
-    :param item_validation: boolean flag
-    :return: boolean flag
-    """
-    logging.info("Validating mongo data - START")
-    count_flag = False
-    item_flag = False
-
-    # count validation
-    if count_validation:
-        if mongo_collection.count_documents({}) == len(template_data):
-            count_flag = True
-            logging.debug("Validating mongo data - count validation passed.")
-        else:
-            logging.warning("Validating mongo data - count validation failed! - END")
-            return False
-
-
-    # item validation
-    for i in template_data:
-        # cross-check each document in mongo collection against template data, by provided params
-        if mongo_collection.find_one({mongo_param_to_validate: i[template_param_to_validate]}) is None:
-            print("Here:", mongo_collection.find_one({mongo_param_to_validate: i[template_param_to_validate]}))
-            item_flag = False
-            logging.warning("Validating mongo data - item validation failed! - END")
-            return False
-        else:
-            logging.debug("Validating mongo data - item validation passed.")
-            pass
-
-    item_flag = True
-    logging.info("Validating mongo data - all validations passed - END.")
-    return count_flag and item_flag
 
