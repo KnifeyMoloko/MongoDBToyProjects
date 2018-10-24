@@ -12,15 +12,13 @@ Date: 08.17.2018 13:19"""
 
 #imports
 import pymongo
-import json
 import logging
-import pprint
 from sys import argv
 from logging import config as log_config
 from dateutil import parser
 from datetime import datetime
 from pathlib import Path
-from nba_py import constants, game, player, team, Scoreboard
+from nba_py import constants, team, Scoreboard
 from constants import log, logger_root_config, nba_teams, runtime_timestamp
 from helpers import *
 
@@ -79,8 +77,8 @@ def main():
     # check if the season run option is
     if is_season_run:
         season_run_db = mongo_client.nba.prev_season
-        season_run(season_run_season, season_run_db)
-        return 0
+        get_season_run(season_run_season, season_run_db, team)
+        return 0  # return, in order to exit the script
 
     if teams.find_one({}) is None:
         if first_run is True:

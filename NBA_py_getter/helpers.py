@@ -4,6 +4,44 @@ import logging
 # helper functions for NBA_py_getter
 
 
+# decorators
+
+
+def basic_log_decorator(func):
+    def wrapper(*args, **kwargs):
+        try:
+            logging.info(func.__name__ + " - START")
+            output = func(*args, **kwargs)
+            logging.info(func.__name__ + " - END")
+            return output
+        except Exception:
+            logging.exception("Bumped into trouble in " + func.__name__)
+    return wrapper
+
+
+def get_row_set_decorator(func):
+    logging.debug("Getting results set from " + func.__name__)
+
+    def wrapper(*args, **kwargs):
+        input = func(*args, **kwargs)
+        output = []
+
+        for i in input:
+            output.append(i['rowSet'])
+        return output[0]
+    return wrapper
+
+
+def get_result_sets_decorator(func):
+    logging.debug("Getting row set from " + func.__name__)
+
+    def wrapper(*args, **kwargs):
+        output = func(*args, **kwargs)
+        return output['resultSets']
+    return wrapper
+
+
+@basic_log_decorator
 def parse_argv(argv_list):
     """
     Count optional positional params for the script and parse them to modify
@@ -11,7 +49,6 @@ def parse_argv(argv_list):
     :param argv_list: argv list imported from sys
     :return: [first_run, no_mongo, no_postgre, run_date]
     """
-    logging.info("Parsing environment runtime arguments - START")
     first_run = False
     no_mongo = False
     no_postgre = False
@@ -21,16 +58,14 @@ def parse_argv(argv_list):
 
     output = [first_run, no_mongo, no_postgre, run_date, is_season_run, season_run_season]
     counter = 1
-    try:
-        while counter <= len(output):
-            output[counter - 1] = argv_list[counter]
-            counter = counter + 1
-    except Exception:
-        logging.exception("Bumped into a problem with putting the env params into a list!")
-    logging.info("Parsing environment runtime arguments - END")
+    while counter <= len(output):
+        output[counter - 1] = argv_list[counter]
+        counter = counter + 1
+    print(output)
     return output
 
 
+@basic_log_decorator
 def log_dump(log_container, timestamp, mongo_instance):
     """
     Dumps the logs collected in the log_container list locally and adds them
@@ -42,23 +77,18 @@ def log_dump(log_container, timestamp, mongo_instance):
     :return: No return value
     """
 
-    logging.debug("Log dump - START")
-
     # define database entry using the Logger's stream handler
     db_entry = {"name": "log_" + str(timestamp),
                 "output": log_container.getvalue()}
+
     # add log output to database
-    try:
-        mongo_instance.insert_one(db_entry)
-        logging.debug("Log dump - END")
-    except Exception:
-        #TODO: Maybe create a list of mongodb erros to check here?
-        logging.exception("Bumped into an error while dumping log!")
+    mongo_instance.insert_one(db_entry)
 
 
 # has 'x' checks
 
 
+@basic_log_decorator
 def has_games(scoreboard_json):
     """
     Checks if there were any matches played on a given date. Use this as the
@@ -67,14 +97,10 @@ def has_games(scoreboard_json):
     :param scoreboard_json: Scoreboard JSON dump
     :return: Boolean - True if there were any matches
     """
-    logging.debug("Game availability check - START")
-    try:
-        if scoreboard_json is not None and scoreboard_json["resultSets"][6]["rowSet"] is not []:
-            logging.debug("Game availability check - END")
-            return True
-    except Exception:
-        logging.exception("Bumped into an error while checking game "
-                          "availability")
+
+    if scoreboard_json is not None and scoreboard_json["resultSets"][6]["rowSet"] is not []:
+        logging.debug("Game availability check - END")
+        return True
 
 
 # data getters
@@ -167,6 +193,8 @@ def get_conference_standings(scoreboard_json):
         logging.exception("Bumped into an error while getting conference standings")
 
 
+@get_row_set_decorator
+@get_result_sets_decorator
 def get_team_game_logs(team_id, season, nba_py_module):
     """
     Returns a season's worth of game logs for a single NBA team.
@@ -182,6 +210,7 @@ def get_team_game_logs(team_id, season, nba_py_module):
         return output_json
     except Exception:
         logging.exception("Bumped into exception while getting game log")
+
 
 
 def get_season_nba_game_logs(team_list, season, nba_py_module):
@@ -200,18 +229,21 @@ def get_season_nba_game_logs(team_list, season, nba_py_module):
         logging.debug("Getting NBA game logs (multiple teams) - END")
     except Exception:
         logging.exception("Bumped into a problem when getting NBA game logs (multiple teams)")
-    print(output)
     return output
 
 
-def season_run(season, mongo_collection):
+@basic_log_decorator
+def get_season_run(season, mongo_collection, nba_py_module):
     # imports
     from constants import nba_teams
-    from nba_py.team import TeamGameLogs
+    from pprint import pprint
+
+    nba_py_mod = nba_py_module
 
     # get the team_logs
 
-    games = get_season_nba_game_logs(nba_teams, season, TeamGameLogs)
+    games = get_season_nba_game_logs(nba_teams, season, nba_py_mod.TeamGameLogs)
+    pprint(games)
 
 
 # data manipulation funcs
