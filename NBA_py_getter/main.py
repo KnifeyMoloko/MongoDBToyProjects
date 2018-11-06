@@ -77,7 +77,9 @@ def main():
     # check if the season run option is
     if is_season_run:
         season_run_db = mongo_client.nba.prev_season
-        get_season_run(season_run_season, season_run_db, team)
+        # getting around the return of a func being a tuple
+        s_run = get_season_run(season_run_season, season_run_db, team)[0]
+        mongo_dispatcher(data=s_run, db_enpoint=season_run_db)
         return 0  # return, in order to exit the script
 
     if teams.find_one({}) is None:
@@ -91,16 +93,30 @@ def main():
     else:
         raise LookupError
 
-    ### call data getters to fetch data from nba.com ###
+
+    # call data getters to fetch data from nba.com
+
     date = run_date
     logging.info("Run date is: " + str(run_date))
 
-    ### fetch the Scoreboard json dump
+    # fetch the Scoreboard json dump
     scoreboard = get_scoreboard(date, Scoreboard)
 
-
     # check if there are games available
+
     if has_games(scoreboard):
+        #TODO: rework this into decorators
+        """ strucuture:
+        has_games ret: scoreboard if True 
+            >>> line_score ret: scoreboard, [{"date": date, "line_score": line_score...}] 
+            >>> series_standinds 
+            >>> last_meeting 
+            >>> standings
+        then validate elements
+        then format elements (split by team_id?) (split the line_score by game_id for postgre!)
+        then dispatch to postgre (line_score, series_standings, last_meeting, standings?)
+        then dispatch to mongo
+        """
         line_score = get_line_score(scoreboard)  # prime source for the web page and game db
         series_standings = get_series_standings(scoreboard)  # link to the game db?
         last_meeting = get_last_meeting(scoreboard)  # link to the game db

@@ -42,25 +42,32 @@ def get_result_sets_decorator(func):
     return wrapper
 
 
+def get_headers_decorator(func):
+    logging.debug("Getting headers for data from " + func.__name__)
+
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)[0]['headers']
+    return wrapper
+
+
 @basic_log_decorator
 def parse_argv(argv_list):
     """
     Count optional positional params for the script and parse them to modify
     the runtime behavior of main using the flags in main.
     :param argv_list: argv list imported from sys
-    :return: [first_run, no_mongo, no_postgre, run_date]
+    :return: [first_run, no_mongo, no_postgre, run_date, is_season_run, seasons_run_season]
     """
-    first_run = False
-    no_mongo = False
-    no_postgre = False
-    run_date = None
-    is_season_run = False
-    season_run_season = None
+    # assign default values
+    first_run = no_mongo = no_postgre = is_season_run = False
+    run_date = season_run_season = None
 
+    # assign argv values
     output = [first_run, no_mongo, no_postgre, run_date, is_season_run, season_run_season]
     counter = 1
+
     while counter <= len(output):
-        output[counter - 1] = argv_list[counter]
+        output[counter - 1] = argv_list[counter]  # first argv param is always the python module name!
         counter = counter + 1
     print(output)
     return output
@@ -86,46 +93,26 @@ def log_dump(log_container, timestamp, mongo_instance):
     mongo_instance.insert_one(db_entry)
 
 
-# has 'x' checks
-
-
-@basic_log_decorator
-def has_games(scoreboard_json):
-    """
-    Checks if there were any matches played on a given date. Use this as the
-    condition before running the data getters to avoid empty data dumps.
-
-    :param scoreboard_json: Scoreboard JSON dump
-    :return: Boolean - True if there were any matches
-    """
-
-    if scoreboard_json is not None and scoreboard_json["resultSets"][6]["rowSet"] is not []:
-        logging.debug("Game availability check - END")
-        return True
-
-    # validators
-
-
 @basic_log_decorator
 def season_game_logs_validator(func):
     def wrapper(*args, **kwargs):
 
         # input
-        logging.debug("Getting validation input from func")
+        logging.debug('Getting validation input from func')
         input_data = func(*args, **kwargs)
 
-        # size validation
-        logging.debug("Comparing template size to input size")
-        size_val_param = len(input_data[1])
-        size_val_compare = len(input_data[0])
-        assert size_val_param == size_val_compare, "Size mismatch in assertion!"
+        # size validation - compare the size of template and data
+        logging.debug('Comparing template size to input size')
+        assert len(input_data[1]) == len(input_data[0]), "Size mismatch in assertion!"
 
-        # structure validation
-        logging.debug("Comparing input structure to template structure")
+        # structure/content validation
+        logging.debug('Comparing input structure/content to template structure/content')
         fetched_teams_ids = [i[0][0] for i in input_data[0]]
         template_ids = [j['_id'] for j in input_data[1]]
-        assert fetched_teams_ids == template_ids
+        assert fetched_teams_ids == template_ids, "Structure/content mismatch in assertion!"
 
+        # if both assertions return True, return the game logs data
+        logging.info("Season log data validations passed. Data looks good.")
         return input_data[0]
     return wrapper
 
@@ -181,6 +168,25 @@ def mongo_collection_validator(mongo_collection, template_data,
     item_flag = True
     logging.info("Validating mongo data - all validations passed - END.")
     return count_flag and item_flag
+
+
+# has 'x' checks
+
+@basic_log_decorator
+def has_games(scoreboard_json):
+    """
+    Checks if there were any matches played on a given date. Use this as the
+    condition before running the data getters to avoid empty data dumps.
+
+    :param scoreboard_json: Scoreboard JSON dump
+    :return: Boolean - True if there were any matches
+    """
+
+    if scoreboard_json is not None and scoreboard_json["resultSets"][6]["rowSet"] is not []:
+        logging.debug("Game availability check - END")
+        return True
+
+    # validators
 
 
 # data getters
@@ -302,7 +308,7 @@ def get_season_nba_game_logs(team_list, season, nba_py_module):
     return output
 
 
-@season_game_logs_validator
+#@season_game_logs_validator
 @basic_log_decorator
 def get_season_run(season, mongo_collection, nba_py_module):
     # imports
@@ -446,8 +452,24 @@ def pack_season_team_logs(game_logs):
 # dispatch funcs
 
 
+@basic_log_decorator
 def mongo_dispatcher(data, db_enpoint):
-    pass
+    """
+
+    :param data:
+    :param db_enpoint:
+    :return:
+    """
+    assert type(data) is list, "Type assertion failed! Argument is not a list!"
+    if len(data) == 0:
+        logging.info("Data list for mnogo dispatcher was empty. Returning.")
+        return
+    elif len(data) == 1:
+        logging.debug("Data list for mnogo dispatcher was a singleton. Dispatching one.")
+        db_enpoint.insert_one(data[0])
+    else:
+        for e in data:
+            print(e, "\n")
 
 
 def postgresql_dispatcher(data, db_enpoint):
