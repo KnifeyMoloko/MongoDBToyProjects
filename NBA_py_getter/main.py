@@ -104,40 +104,39 @@ def main():
 
     # check if there are games available
 
-    if has_games(scoreboard):
-        #TODO: rework this into decorators
-        """ strucuture:
-        has_games ret: scoreboard if True 
-            >>> line_score ret: scoreboard, [{"date": date, "line_score": line_score...}] 
-            >>> series_standinds 
-            >>> last_meeting 
-            >>> standings
-        then validate elements
-        then format elements (split by team_id?) (split the line_score by game_id for postgre!)
-        then dispatch to postgre (line_score, series_standings, last_meeting, standings?)
-        then dispatch to mongo
-        """
-        line_score = get_line_score(scoreboard)  # prime source for the web page and game db
-        series_standings = get_series_standings(scoreboard)  # link to the game db?
-        last_meeting = get_last_meeting(scoreboard)  # link to the game db
-        standings = get_conference_standings(scoreboard)  # only useful for the web page
+    #TODO: rework this into decorators
+    """ strucuture:
+    has_games ret: scoreboard if True 
+        >>> line_score ret: scoreboard, [{"date": date, "line_score": line_score...}] 
+        >>> series_standinds 
+        >>> last_meeting 
+        >>> standings
+    then validate elements
+    then format elements (split by team_id?) (split the line_score by game_id for postgre!)
+    then dispatch to postgre (line_score, series_standings, last_meeting, standings?)
+    then dispatch to mongo
+    line_score = get_line_score(scoreboard)  # prime source for the web page and game db
+    series_standings = get_series_standings(scoreboard)  # link to the game db?
+    last_meeting = get_last_meeting(scoreboard)  # link to the game db
+    standings = get_conference_standings(scoreboard)  # only useful for the web page
+    """
 
-        """
-        row_set = (scoreboard["resultSets"][1]["rowSet"])
-        # this is essentialy the daily scores layout, though it might make more sense to put it in the SQL db
-        for a, h in zip(row_set[::2], row_set[1::2]):
-            print(a[4], a[21], " : ", h[4], h[21])
-        """
+    """
+    row_set = (scoreboard["resultSets"][1]["rowSet"])
+    # this is essentialy the daily scores layout, though it might make more sense to put it in the SQL db
+    for a, h in zip(row_set[::2], row_set[1::2]):
+        print(a[4], a[21], " : ", h[4], h[21])
+    """
 
-        # modify the data if needed
-        modded_line_score = line_score_formatter(line_score)  # this is a tuple
-        #add_games_from_line_score(teams, modded_line_score[0])
+    # modify the data if needed
+    #modded_line_score = line_score_formatter(line_score)  # this is a tuple
+    #add_games_from_line_score(teams, modded_line_score[0])
 
-        # upload the data to the mongo databases
-        mongo_dispatcher(data=None, db_enpoint=None)
+    # upload the data to the mongo databases
+    mongo_dispatcher(data=None, db_enpoint=None)
 
-        # upload the data to postgresql databases
-        postgresql_dispatcher(data=None, db_enpoint=None)
+    # upload the data to postgresql databases
+    postgresql_dispatcher(data=None, db_enpoint=None)
 
     # dump the logs into the mongo database and local catalog
     log_dump(log, datetime.today(), logs)

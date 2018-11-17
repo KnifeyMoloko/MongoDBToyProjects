@@ -7,7 +7,7 @@ import logging
 # base decorators
 
 
-def basic_log_decorator(func):
+def basic_log(func):
     def wrapper(*args, **kwargs):
         try:
             logging.info(func.__name__ + " - START")
@@ -20,7 +20,7 @@ def basic_log_decorator(func):
     return wrapper
 
 
-def get_row_set_decorator(func):
+def get_row_set(func):
     logging.debug("Getting results set from " + func.__name__)
 
     def wrapper(*args, **kwargs):
@@ -29,11 +29,11 @@ def get_row_set_decorator(func):
 
         for i in input:
             output.append(i['rowSet'])
-        return output[0]
+        return output
     return wrapper
 
 
-def get_result_sets_decorator(func):
+def get_result_sets(func):
     logging.debug("Getting row set from " + func.__name__)
 
     def wrapper(*args, **kwargs):
@@ -42,15 +42,20 @@ def get_result_sets_decorator(func):
     return wrapper
 
 
-def get_headers_decorator(func):
+def get_headers(func):
     logging.debug("Getting headers for data from " + func.__name__)
 
     def wrapper(*args, **kwargs):
-        return func(*args, **kwargs)[0]['headers']
+        input = func(*args, **kwargs)
+        output = []
+
+        for i in input:
+            output.append(i['headers'])
+        return output
     return wrapper
 
 
-@basic_log_decorator
+@basic_log
 def parse_argv(argv_list):
     """
     Count optional positional params for the script and parse them to modify
@@ -66,14 +71,14 @@ def parse_argv(argv_list):
     output = [first_run, no_mongo, no_postgre, run_date, is_season_run, season_run_season]
     counter = 1
 
-    while counter <= len(output):
+    while counter <= len(output) and len(argv_list) > 1:
         output[counter - 1] = argv_list[counter]  # first argv param is always the python module name!
         counter = counter + 1
     print(output)
     return output
 
 
-@basic_log_decorator
+@basic_log
 def log_dump(log_container, timestamp, mongo_instance):
     """
     Dumps the logs collected in the log_container list locally and adds them
@@ -93,12 +98,14 @@ def log_dump(log_container, timestamp, mongo_instance):
     mongo_instance.insert_one(db_entry)
 
 
-@basic_log_decorator
+# validators
+
+@basic_log
 def season_game_logs_validator(func):
     def wrapper(*args, **kwargs):
 
         # input
-        logging.debug('Getting validation input from func')
+        logging.debug('Getting validation input from func:' + func.__name__)
         input_data = func(*args, **kwargs)
 
         # size validation - compare the size of template and data
@@ -117,6 +124,7 @@ def season_game_logs_validator(func):
     return wrapper
 
 
+@basic_log
 def mongo_collection_validator(mongo_collection, template_data,
                                mongo_param_to_validate,
                                template_param_to_validate,
@@ -170,55 +178,52 @@ def mongo_collection_validator(mongo_collection, template_data,
     return count_flag and item_flag
 
 
-# has 'x' checks
-
-@basic_log_decorator
-def has_games(scoreboard_json):
-    """
-    Checks if there were any matches played on a given date. Use this as the
-    condition before running the data getters to avoid empty data dumps.
-
-    :param scoreboard_json: Scoreboard JSON dump
-    :return: Boolean - True if there were any matches
+@basic_log
+def scoreboard_validator(func):
     """
 
-    if scoreboard_json is not None and scoreboard_json["resultSets"][6]["rowSet"] is not []:
-        logging.debug("Game availability check - END")
-        return True
+    :param func:
+    :return:
+    """
+    def wrapper(*args, **kwargs):
+        # import date template
+        from data_templates import scoreboard_headers as template
 
-    # validators
+        # get data from func
+        logging.debug('Getting validation input from func')
+        data = func(*args, **kwargs)
+
+        # size validation - compare the size of template and data
+        logging.debug('Comparing template size to input size')
+        assert(len(data) == len(template)), "Size mismatch in assertion!"
+
+        # structure/content validation - check if elements are not empty lists (no games) or a None
+        logging.debug('Comparing input structure/content to template structure/content')
+        for i in data:
+            for j in i:
+                assert(j is not [] and j is not None), "Structure / content mismatch in assertio for" + str(j)
+
+        # if both assertions return True, return the game logs data
+        logging.info("Scoreboard data validations passed. Data looks good.")
+        return data
+    return wrapper
 
 
 # data getters
 
 
-def get_data_headers(data):
-    """
-    Fetches the list of headers for a given rowSet in nba_py.
-    :param data: the nba_py module for on the level 1 step above 'rowSet'
-    :return: list of headers for the data set
-    """
-    logging.debug("Fetching headers for data set - START")
-    try:
-        headers_list = data["headers"]
-        return headers_list
-    except Exception:
-        logging.exception("Bumped into an error while fetching headers for data set")
-
-
+@scoreboard_validator
+@get_row_set
+@get_result_sets
+@basic_log
 def get_scoreboard(date, scoreboard_instance):
     """
     :param scoreboard_instance: nba_py Scoreboard instance
-    :param date: datetime.datetime object as the date we query for
+    :param date: datetime.datetime object as the date we query for (-1 to get yesterday scores)
     :return: nba_py Scoreboard object
     """
-    logging.debug("Fetching Scoreboard - START")
-    try:
-        scoreboard_json = scoreboard_instance(month=date.month, day=date.day, year=date.year).json
-        logging.debug("Fetching Scoreboard - DONE")
-        return scoreboard_json
-    except Exception:
-        logging.exception("Bumped into an error while fetching Scoreboard")
+    scoreboard_json = scoreboard_instance(month=date.month, day=date.day - 1, year=date.year).json
+    return scoreboard_json
 
 
 def get_line_score(scoreboard_json):
@@ -279,9 +284,9 @@ def get_conference_standings(scoreboard_json):
         logging.exception("Bumped into an error while getting conference standings")
 
 
-@get_row_set_decorator
-@get_result_sets_decorator
-@basic_log_decorator
+@get_row_set
+@get_result_sets
+@basic_log
 def get_team_game_logs(team_id, season, nba_py_module):
     """
     Returns a season's worth of game logs for a single NBA team.
@@ -295,7 +300,7 @@ def get_team_game_logs(team_id, season, nba_py_module):
     return output_json
 
 
-@basic_log_decorator
+@basic_log
 def get_season_nba_game_logs(team_list, season, nba_py_module):
     """
     Getter function for fetching the game logs for multiple NBA teams.
@@ -309,7 +314,7 @@ def get_season_nba_game_logs(team_list, season, nba_py_module):
 
 
 #@season_game_logs_validator
-@basic_log_decorator
+@basic_log
 def get_season_run(season, mongo_collection, nba_py_module):
     # imports
     from constants import nba_teams
@@ -444,7 +449,7 @@ def format_team_list(team_list):
     return formatted_list
 
 
-@basic_log_decorator
+@basic_log
 def pack_season_team_logs(game_logs):
     for i in game_logs:
         pass
@@ -452,7 +457,7 @@ def pack_season_team_logs(game_logs):
 # dispatch funcs
 
 
-@basic_log_decorator
+@basic_log
 def mongo_dispatcher(data, db_enpoint):
     """
 
@@ -531,7 +536,7 @@ def postgresql_dispatcher(data, db_enpoint):
     pass
 
 
-@basic_log_decorator
+@basic_log
 def seed_teams(mongo_collcection, team_data):
     """
     :param mongo_collcection: mongo collection to seed with data
