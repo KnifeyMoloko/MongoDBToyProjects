@@ -212,6 +212,54 @@ def scoreboard_validator(func):
 # data getters
 
 
+@basic_log
+def get_line_score(func):
+    """
+    :param scoreboard_json: nba_py Scoreboard JSON dump
+    :return: the LineScore key values from the JSON dump
+    """
+    def wrapper(*args, **kwargs):
+        # get input from func
+        input = func(*args, **kwargs)
+
+        # wrap input into a dict
+        output_dict = {'game_header': input[0],
+                       'line_score': input[1],
+                       'series_standings' : input[2],
+                       'last_meeting' : input[3],
+                       'east_conf_standings_by_day' : input[4],
+                       'west_conf_standings_by_day' : input[5],
+                       'available' : input[6]}
+
+        # pack data for mongo
+        mongo_out = []
+
+        # pack data for postgre
+        away = output_dict['line_score'][::2]
+        home = output_dict['line_score'][1::2]
+        zipped_line_score = []
+
+        for l in zip(away, home):
+            line = l[0] + l[1]
+            # validate: each of the elements in the tuple is from the same game sequence
+            # 1 and 29 are game sequence id's in the zipped list
+            assert line[1] == line[29], "Game id mismatch in assertion"
+            zipped_line_score.append(line)
+        from pprint import pprint
+
+        postgre_out = [
+            zipped_line_score,
+            output_dict['series_standings'],
+            output_dict['last_meeting'],
+            output_dict['east_conf_standings_by_day'],
+            output_dict['west_conf_standings_by_day']
+        ]
+        pprint(postgre_out[3])
+        return mongo_out, postgre_out
+    return wrapper
+
+
+@get_line_score
 @scoreboard_validator
 @get_row_set
 @get_result_sets
@@ -224,64 +272,6 @@ def get_scoreboard(date, scoreboard_instance):
     """
     scoreboard_json = scoreboard_instance(month=date.month, day=date.day - 1, year=date.year).json
     return scoreboard_json
-
-
-def get_line_score(scoreboard_json):
-    """
-    :param scoreboard_json: nba_py Scoreboard JSON dump
-    :return: the LineScore key values from the JSON dump
-    """
-    logging.debug("Fetching line score - START.")
-    try:
-        scores = scoreboard_json["resultSets"][1]["rowSet"]
-        logging.debug("Fetching line score - DONE.")
-        return scores
-    except Exception:
-        logging.exception("Bumped into an error while getting line score")
-
-
-def get_series_standings(scoreboard_json):
-    """
-    :param scoreboard_json: nba_py Scoreboard JSON dump
-    :return: series standings for a given game
-    """
-    logging.debug("Fetching series standings - START")
-    try:
-        series_standings = scoreboard_json["resultSets"][2]["rowSet"]
-        logging.debug("Fetching series standings - DONE")
-        return series_standings
-    except Exception:
-        logging.exception("Bumped into an error while getting series standings")
-
-
-def get_last_meeting(scoreboard_json):
-    """
-    :param scoreboard_json: nba_py Scoreboard JSON dump
-    :return: last meeting data for a given game
-    """
-    logging.debug("Fetching last meetings - START")
-    try:
-        last_meeting = scoreboard_json["resultSets"][3]["rowSet"]
-        logging.debug("Fetching series standings - DONE")
-        return last_meeting
-    except Exception:
-        logging.exception("Bumped into an error while getting last meetings")
-
-
-def get_conference_standings(scoreboard_json):
-    """
-    :param scoreboard_json: nba_py Scoreboard JSON dump
-    :return: a dict containing west and east conference data for a given date
-    """
-    logging.debug("Fetching last meetings - END")
-    try:
-        east_standings = scoreboard_json["resultSets"][4]["rowSet"]
-        west_standings = scoreboard_json["resultSets"][5]["rowSet"]
-        daily_standings = {"east": east_standings, "west": west_standings}
-        logging.debug("Fetching series standings - DONE")
-        return daily_standings
-    except Exception:
-        logging.exception("Bumped into an error while getting conference standings")
 
 
 @get_row_set
@@ -313,7 +303,7 @@ def get_season_nba_game_logs(team_list, season, nba_py_module):
     return output
 
 
-#@season_game_logs_validator
+@season_game_logs_validator
 @basic_log
 def get_season_run(season, mongo_collection, nba_py_module):
     # imports
@@ -533,6 +523,10 @@ def postgresql_dispatcher(data, db_enpoint):
                      "home_assists integer," \
                      "home_rebounds integer," \
                      "home_turnovers integer);"
+    #TODO: move schemas to data_templates or other file, define schemas for the 4 different sql tables
+    #TODO: make the dispatcher asser the second item in the dispatcher's params and upload them into local sql db
+    #TODO: link local sql db with remote (separate python module
+    #TODO: test if remote receives data from local db
     pass
 
 
