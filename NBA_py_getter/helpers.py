@@ -1,5 +1,4 @@
 import logging
-import functools
 
 
 # helper functions for NBA_py_getter
@@ -9,7 +8,6 @@ import functools
 
 
 def basic_log(func):
-    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
             logging.info(func.__name__ + " - START")
@@ -23,10 +21,9 @@ def basic_log(func):
 
 
 def get_row_set(func):
+    logging.debug("Getting results set from " + func.__name__)
 
-    @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        logging.debug("Getting results set from " + func.__name__)
         input = func(*args, **kwargs)
         output = []
 
@@ -37,20 +34,18 @@ def get_row_set(func):
 
 
 def get_result_sets(func):
+    logging.debug("Getting row set from " + func.__name__)
 
-    @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        logging.debug("Getting row set from " + func.__name__)
         output = func(*args, **kwargs)
         return output['resultSets']
     return wrapper
 
 
 def get_headers(func):
+    logging.debug("Getting headers for data from " + func.__name__)
 
-    @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        logging.debug("Getting headers for data from " + func.__name__)
         input = func(*args, **kwargs)
         output = []
 
@@ -60,11 +55,53 @@ def get_headers(func):
     return wrapper
 
 
+@basic_log
+def parse_argv(argv_list):
+    """
+    Count optional positional params for the script and parse them to modify
+    the runtime behavior of main using the flags in main.
+    :param argv_list: argv list imported from sys
+    :return: [first_run, no_mongo, no_postgre, run_date, is_season_run, seasons_run_season]
+    """
+    # assign default values
+    first_run = no_mongo = no_postgre = is_season_run = False
+    run_date = season_run_season = None
+
+    # assign argv values
+    output = [first_run, no_mongo, no_postgre, run_date, is_season_run, season_run_season]
+    counter = 1
+
+    while counter <= len(output) and len(argv_list) > 1:
+        output[counter - 1] = argv_list[counter]  # first argv param is always the python module name!
+        counter = counter + 1
+    print(output)
+    return output
+
+
+@basic_log
+def log_dump(log_container, timestamp, mongo_instance):
+    """
+    Dumps the logs collected in the log_container list locally and adds them
+    to the mongo_instance database.
+
+    :param log_container: list for collecting log entries
+    :param timestamp: datetime.datetime.timestamp or whatever you prefer
+    :param mongo_instance: mongo db collection path for storing logs
+    :return: No return value
+    """
+
+    # define database entry using the Logger's stream handler
+    db_entry = {"name": "log_" + str(timestamp),
+                "output": log_container.getvalue()}
+
+    # add log output to database
+    mongo_instance.insert_one(db_entry)
+
+
 # validators
 
 @basic_log
 def season_game_logs_validator(func):
-    @functools.wraps(func)
     def wrapper(*args, **kwargs):
 
         # input
@@ -148,7 +185,6 @@ def scoreboard_validator(func):
     :param func:
     :return:
     """
-    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         # import date template
         from data_templates import scoreboard_headers as template
@@ -165,7 +201,7 @@ def scoreboard_validator(func):
         logging.debug('Comparing input structure/content to template structure/content')
         for i in data:
             for j in i:
-                assert(j is not [] and j is not None), "Structure / content mismatch in assertion for" + str(j)
+                assert(j is not [] and j is not None), "Structure / content mismatch in assertio for" + str(j)
 
         # if both assertions return True, return the game logs data
         logging.info("Scoreboard data validations passed. Data looks good.")
@@ -175,28 +211,6 @@ def scoreboard_validator(func):
 
 # data getters
 
-@basic_log
-def parse_argv(argv_list):
-    """
-    Count optional positional params for the script and parse them to modify
-    the runtime behavior of main using the flags in main.
-    :param argv_list: argv list imported from sys
-    :return: [first_run, no_mongo, no_postgre, run_date, is_season_run, seasons_run_season]
-    """
-    # assign default values
-    first_run = no_mongo = no_postgre = is_season_run = False
-    run_date = season_run_season = None
-
-    # assign argv values
-    output = [first_run, no_mongo, no_postgre, run_date, is_season_run, season_run_season]
-    counter = 1
-
-    while counter <= len(output) and len(argv_list) > 1:
-        output[counter - 1] = argv_list[counter]  # first argv param is always the python module name!
-        counter = counter + 1
-    print(output)
-    return output
-
 
 @basic_log
 def get_line_score(func):
@@ -204,7 +218,6 @@ def get_line_score(func):
     :param scoreboard_json: nba_py Scoreboard JSON dump
     :return: the LineScore key values from the JSON dump
     """
-    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         # get input from func
         input = func(*args, **kwargs)
@@ -212,11 +225,11 @@ def get_line_score(func):
         # wrap input into a dict
         output_dict = {'game_header': input[0],
                        'line_score': input[1],
-                       'series_standings': input[2],
-                       'last_meeting': input[3],
-                       'east_conf_standings_by_day': input[4],
-                       'west_conf_standings_by_day': input[5],
-                       'available': input[6]}
+                       'series_standings' : input[2],
+                       'last_meeting' : input[3],
+                       'east_conf_standings_by_day' : input[4],
+                       'west_conf_standings_by_day' : input[5],
+                       'available' : input[6]}
 
         # pack data for mongo
         mongo_out = []
@@ -232,22 +245,17 @@ def get_line_score(func):
             # 1 and 29 are game sequence id's in the zipped list
             assert line[1] == line[29], "Game id mismatch in assertion"
             zipped_line_score.append(line)
+        from pprint import pprint
 
-        postgresql_out = [
+        postgre_out = [
             zipped_line_score,
             output_dict['series_standings'],
             output_dict['last_meeting'],
             output_dict['east_conf_standings_by_day'],
             output_dict['west_conf_standings_by_day']
         ]
-
-        # debug log
-        from pprint import pprint
-        from data_templates import postgresql_line_score_schema
-        pprint(postgresql_out[0][0])
-        print("Assertion simulation. \n Len of data is: {} \n Len of schema rows is: {}".format(
-            len(postgresql_out[0][0]), len(postgresql_line_score_schema.split(","))))
-        return mongo_out, postgresql_out
+        pprint(postgre_out[3])
+        return mongo_out, postgre_out
     return wrapper
 
 
@@ -312,31 +320,131 @@ def get_season_run(season, mongo_collection, nba_py_module):
 # data manipulation funcs
 
 
+def line_score_formatter(raw_data):
+    """
+    Note: makes use of the scoreboard_line_score_headers constant.
+    :param raw_data: line score export list of lists
+    :return: formatted data tuple: (pymongo_data, postgresql_data)
+    """
+    # prepare data schemas
+    logging.debug("Formatting the line score data - START")
+    # the dict is used as a template for the home/away dicts for mongodb
+    mongo_template = {'game_date_est': None,
+                      'game_sequence': None,
+                      'game_id': None,
+                      'team_id': None,
+                      'away_or_home': None,
+                      'data': None
+                      }
+
+    # MongoDB
+    try:
+        logging.debug("Formatting line score for mongo - START")
+        # make copies of the mongodb dict template
+        away_team_scoreboard = []
+        home_team_scoreboard = []
+
+        # split the home and away team's data from raw_data, keeping the sequence of entries
+        away = raw_data[::2]
+        home = raw_data[1::2]
+
+        for team in away:
+            temp_dict = mongo_template.copy()
+            temp_dict["game_date_est"] = team[0]
+            temp_dict["game_sequence"] = team[1]
+            temp_dict["game_id"] = team[2]
+            temp_dict["team_id"] = team[3]
+            temp_dict["away_or_home"] = "away"
+            temp_dict["data"] = team[4::]
+            away_team_scoreboard.append(temp_dict)
+
+        for team in home:
+            temp_dict = mongo_template.copy()
+            temp_dict["game_date_est"] = team[0]
+            temp_dict["game_sequence"] = team[1]
+            temp_dict["game_id"] = team[2]
+            temp_dict["team_id"] = team[3]
+            temp_dict["away_or_home"] = "home"
+            temp_dict["data"] = team
+            home_team_scoreboard.append(temp_dict)
+
+        # list of dicts in [all-away-teams, all-home-teams] order. Split in 2 by len and zip for pairings
+        scoreboard_final_mongodb_flat = away_team_scoreboard + home_team_scoreboard
+
+    except Exception:
+        logging.exception("Bumped into an error while formatting line score for mongo")
+
+    """
+    # create a list [to keep order] of dict objects for every away team
+    for team in away:
+        temp_dict = {}
+        zipped_data = zip(scoreboard_line_score_headers_lower, team)  # use headers from constants
+        for zed in zipped_data:
+            temp_dict[zed[0]] = zed[1]  # use the zipped header, datum pairs as key: value
+        away_team_scoreboard.append(temp_dict)
+
+    # create a list [to keep order] of dict objects for every home team
+    for team in home:
+        temp_dict = {}
+        zipped_data = zip(scoreboard_line_score_headers_lower, team)  # use headers from constants
+        for zed in zipped_data:
+            temp_dict[zed[0]] = zed[1]  # use the zipped header, datum pairs as key: value
+        home_team_scoreboard.append(temp_dict)
+
+    # create a master dict for both away and home teams' dicts
+    scoreboard_final_mongodb = {"away": away_team_scoreboard,
+                                "home": home_team_scoreboard}
+
+    """
+
+    # PostgreSQL
+    try:
+        logging.debug("Formatting line score for PostgreSQL - START")
+        scoreboard_final_postgresql = []
+        # zip the inner lists of raw_data by 2 for away-home team pairs for every game
+        for l in zip(away, home):
+            line = l[0] + l[1]
+            # validate: each of the elements in the tuple is from the same game sequence
+            if line[1] == line[29]:  # 1 and 29 are game sequence id's in the zipped list
+                scoreboard_final_postgresql.append(line)
+            else:
+                logging.error("Bumped into an error: cannot align game sequence")
+                return ReferenceError
+
+    except Exception:
+        logging.exception("Bumped into an error while formatting line score for PostgreSQL")
+
+    # pack results into output tuple and return
+    try:
+        output = (scoreboard_final_mongodb_flat, scoreboard_final_postgresql)
+    except ReferenceError or ValueError or UnboundLocalError:
+        logging.exception("Bumped into an error while packing the formatting results for line score"
+                          "")
+    logging.debug("Formatting the line score data - END")
+    return output
+
+
+def format_team_list(team_list):
+    """
+
+    :param team_list:
+    :return:
+    """
+    formatted_list = []
+
+    for row in team_list:
+        new_dict = {"team_id": row[1],
+                    "team_abbreviation": row[4]}
+        formatted_list.append(new_dict)
+    return formatted_list
+
+
 @basic_log
 def pack_season_team_logs(game_logs):
     for i in game_logs:
         pass
 
 # dispatch funcs
-
-@basic_log
-def log_dump(log_container, timestamp, mongo_instance):
-    """
-    Dumps the logs collected in the log_container list locally and adds them
-    to the mongo_instance database.
-
-    :param log_container: list for collecting log entries
-    :param timestamp: datetime.datetime.timestamp or whatever you prefer
-    :param mongo_instance: mongo db collection path for storing logs
-    :return: No return value
-    """
-
-    # define database entry using the Logger's stream handler
-    db_entry = {"name": "log_" + str(timestamp),
-                "output": log_container.getvalue()}
-
-    # add log output to database
-    mongo_instance.insert_one(db_entry)
 
 
 @basic_log
@@ -355,14 +463,66 @@ def mongo_dispatcher(data, db_enpoint):
         logging.debug("Data list for mnogo dispatcher was a singleton. Dispatching one.")
         db_enpoint.insert_one(data[0])
     else:
-        #TODO: How to structure the mongodb data dumps best?
         for e in data:
             print(e, "\n")
 
 
 def postgresql_dispatcher(data, db_enpoint):
-
-
+    sql_data_schema = "(id serial PRIMARY KEY, " \
+                     "away_game_date_est date, " \
+                     "away_game_sequence integer, " \
+                     "away_game_id integer, team_id integer, " \
+                     "away_team_abbreviation varchar(3)," \
+                     "away_team_city_name varchar," \
+                     "away_team_wins_losses varchar(6)," \
+                     "away_pts_qtr1 integer ," \
+                     "away_pts_qtr2 integer, " \
+                     "away_pts_qtr3 integer," \
+                     "away_pts_qtr4 integer, " \
+                     "away_pts_ot1 integer, " \
+                     "away_pts_ot2 integer," \
+                     "away_pts_ot3 integer," \
+                     "away_pts_ot4 integer," \
+                     "away_pts_ot5 integer," \
+                     "away_pts_ot6 integer," \
+                     "away_pts_ot7 integer," \
+                     "away_pts_ot8 integer," \
+                     "away_pts_ot9 integer," \
+                     "away_pts_ot10 integer," \
+                     "away_pts integer," \
+                     "away_fg_pct double precision," \
+                     "away_ft_pct double precision," \
+                     "away_fg3_pct double precision," \
+                     "away_assists integer," \
+                     "away_rebounds integer," \
+                     "away_turnovers integer," \
+                     "home_game_date_est date, " \
+                     "home_game_sequence integer, " \
+                     "home_game_id integer, team_id integer, " \
+                     "home_team_abbreviation varchar(3)," \
+                     "home_team_city_name varchar," \
+                     "home_team_wins_losses varchar(6)," \
+                     "home_pts_qtr1 integer ," \
+                     "home_pts_qtr2 integer, " \
+                     "home_pts_qtr3 integer," \
+                     "home_pts_qtr4 integer, " \
+                     "home_pts_ot1 integer, " \
+                     "home_pts_ot2 integer," \
+                     "home_pts_ot3 integer," \
+                     "home_pts_ot4 integer," \
+                     "home_pts_ot5 integer," \
+                     "home_pts_ot6 integer," \
+                     "home_pts_ot7 integer," \
+                     "home_pts_ot8 integer," \
+                     "home_pts_ot9 integer," \
+                     "home_pts_ot10 integer," \
+                     "home_pts integer," \
+                     "home_fg_pct double precision," \
+                     "home_ft_pct double precision," \
+                     "home_fg3_pct double precision," \
+                     "home_assists integer," \
+                     "home_rebounds integer," \
+                     "home_turnovers integer);"
     #TODO: move schemas to data_templates or other file, define schemas for the 4 different sql tables
     #TODO: make the dispatcher asser the second item in the dispatcher's params and upload them into local sql db
     #TODO: link local sql db with remote (separate python module
@@ -377,10 +537,52 @@ def seed_teams(mongo_collcection, team_data):
     :param team_data: data iterable to be inserted
     :return: result of a insert_many() func on the mongo_collection
     """
-    #TODO: Rethink this. How to link teams and games with most sense?
+
     # add a 'games' key to the team_data dicts with an empty array container
     for td in team_data:
         td['games'] = []
 
     mongo_collcection.insert_many(team_data)
     return True
+
+
+def add_games_from_line_score(mongo_collection, line_score_data):
+    """
+
+    :param mongo_collection: the games db array in a collection
+    :param line_score_data: line score data formatted for mongo insertion
+    :return: True on insertion success
+    """
+    logging.info("Adding games from line score to teams - START")
+    logging.debug("Making (team_id, game_id) tuples - START")
+    # make a list of team_id x game_id tuples
+
+    team_id_to_game_id = []
+
+    try:
+        for ls in line_score_data:
+            team_id_to_game_id.append((ls["team_id"], ls["game_id"]))
+    except Exception:
+        logging.exception("Bumped into an error while getting team_id x game_id tuples.")
+        return False
+
+    # loop over the team_id x game_id tuple and update relevant mongo db entries
+    try:
+        for tp in team_id_to_game_id:
+            # check if the game id wasn't already inserted
+            if mongo_collection.find({'_id': tp[0], 'games' : tp[1]}).count() >= 1:
+                logging.debug("Game already present in the output mongo db array. Passing.")
+                pass
+            else:
+                # insert game into teams for the correct team
+                mongo_collection.update_one({"_id" : tp[0]}, {'$push' : {'games' : tp[1]}})
+    except Exception:
+        logging.exception("Bumped into an error while getting team_id x game_id tuples.")
+        return False
+
+    logging.info("Adding games from line score to teams - END")
+    return True
+
+
+
+

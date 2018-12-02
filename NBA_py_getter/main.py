@@ -128,6 +128,10 @@ def main():
         print(a[4], a[21], " : ", h[4], h[21])
     """
 
+    # modify the data if needed
+    #modded_line_score = line_score_formatter(line_score)  # this is a tuple
+    #add_games_from_line_score(teams, modded_line_score[0])
+
     # upload the data to the mongo databases
     mongo_dispatcher(data=None, db_enpoint=None)
 
