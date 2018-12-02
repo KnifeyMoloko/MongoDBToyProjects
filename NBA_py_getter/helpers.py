@@ -173,6 +173,75 @@ def scoreboard_validator(func):
     return wrapper
 
 
+# dispatch funcs
+
+@basic_log
+def log_dump(log_container, timestamp, mongo_instance):
+    """
+    Dumps the logs collected in the log_container list locally and adds them
+    to the mongo_instance database.
+
+    :param log_container: list for collecting log entries
+    :param timestamp: datetime.datetime.timestamp or whatever you prefer
+    :param mongo_instance: mongo db collection path for storing logs
+    :return: No return value
+    """
+
+    # define database entry using the Logger's stream handler
+    db_entry = {"name": "log_" + str(timestamp),
+                "output": log_container.getvalue()}
+
+    # add log output to database
+    mongo_instance.insert_one(db_entry)
+
+
+@basic_log
+def mongo_dispatcher(data, db_enpoint):
+    """
+
+    :param data:
+    :param db_enpoint:
+    :return:
+    """
+    assert type(data) is list, "Type assertion failed! Argument is not a list!"
+    if len(data) == 0:
+        logging.info("Data list for mnogo dispatcher was empty. Returning.")
+        return
+    elif len(data) == 1:
+        logging.debug("Data list for mnogo dispatcher was a singleton. Dispatching one.")
+        db_enpoint.insert_one(data[0])
+    else:
+        #TODO: How to structure the mongodb data dumps best?
+        for e in data:
+            print(e, "\n")
+
+
+@basic_log
+def postgresql_validator(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        from data_templates import postgresql_line_score_values as values
+        data = func(*args, **kwargs)
+
+        # assert if the data provided is a list
+        assert type(data[1]) is list, "Type assertion failed for PostgreSQL dispatcher data"
+        # assert if the provided data list is not empty
+        assert len(data[1]) != 0, "Zero-length assertion failed for PostgreSQL dispatcher data"
+        # assert the equal length of template value tuple and values list for line score
+        assert len(data[1][0][0]) == len(values.split(',')), "Length assertion failed for PostgreSQL dispatcher data"
+        #TODO: what else should we assess before packing the data and dumping into db?
+        return data
+
+        #print("Assertion simulation. \n Len of data is: {} \n Len of schema rows is: {}".format(
+         #   len(postgresql_out[0][0]), len(postgresql_line_score_values.split(","))))
+    return wrapper
+
+    #TODO: move schemas to data_templates or other file, define schemas for the 4 different sql tables
+    #TODO: make the dispatcher asser the second item in the dispatcher's params and upload them into local sql db
+    #TODO: link local sql db with remote (separate python module
+    #TODO: test if remote receives data from local db
+    pass
+
 # data getters
 
 @basic_log
@@ -242,15 +311,16 @@ def get_line_score(func):
         ]
 
         # debug log
-        from pprint import pprint
-        from data_templates import postgresql_line_score_schema
-        pprint(postgresql_out[0][0])
-        print("Assertion simulation. \n Len of data is: {} \n Len of schema rows is: {}".format(
-            len(postgresql_out[0][0]), len(postgresql_line_score_schema.split(","))))
+        #from pprint import pprint
+        #from data_templates import postgresql_line_score_values
+        #pprint(postgresql_out[0][0])
+        #print("Assertion simulation. \n Len of data is: {} \n Len of schema rows is: {}".format(
+        #    len(postgresql_out[0][0]), len(postgresql_line_score_values.split(","))))
         return mongo_out, postgresql_out
     return wrapper
 
 
+@postgresql_validator
 @get_line_score
 @scoreboard_validator
 @get_row_set
@@ -299,7 +369,7 @@ def get_season_nba_game_logs(team_list, season, nba_py_module):
 @basic_log
 def get_season_run(season, mongo_collection, nba_py_module):
     # imports
-    from constants import nba_teams
+    from config import nba_teams
 
     nba_py_mod = nba_py_module
 
@@ -317,57 +387,7 @@ def pack_season_team_logs(game_logs):
     for i in game_logs:
         pass
 
-# dispatch funcs
 
-@basic_log
-def log_dump(log_container, timestamp, mongo_instance):
-    """
-    Dumps the logs collected in the log_container list locally and adds them
-    to the mongo_instance database.
-
-    :param log_container: list for collecting log entries
-    :param timestamp: datetime.datetime.timestamp or whatever you prefer
-    :param mongo_instance: mongo db collection path for storing logs
-    :return: No return value
-    """
-
-    # define database entry using the Logger's stream handler
-    db_entry = {"name": "log_" + str(timestamp),
-                "output": log_container.getvalue()}
-
-    # add log output to database
-    mongo_instance.insert_one(db_entry)
-
-
-@basic_log
-def mongo_dispatcher(data, db_enpoint):
-    """
-
-    :param data:
-    :param db_enpoint:
-    :return:
-    """
-    assert type(data) is list, "Type assertion failed! Argument is not a list!"
-    if len(data) == 0:
-        logging.info("Data list for mnogo dispatcher was empty. Returning.")
-        return
-    elif len(data) == 1:
-        logging.debug("Data list for mnogo dispatcher was a singleton. Dispatching one.")
-        db_enpoint.insert_one(data[0])
-    else:
-        #TODO: How to structure the mongodb data dumps best?
-        for e in data:
-            print(e, "\n")
-
-
-def postgresql_dispatcher(data, db_enpoint):
-
-
-    #TODO: move schemas to data_templates or other file, define schemas for the 4 different sql tables
-    #TODO: make the dispatcher asser the second item in the dispatcher's params and upload them into local sql db
-    #TODO: link local sql db with remote (separate python module
-    #TODO: test if remote receives data from local db
-    pass
 
 
 @basic_log

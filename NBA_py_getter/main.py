@@ -19,7 +19,7 @@ from dateutil import parser
 from datetime import datetime
 from pathlib import Path
 from nba_py import constants, team, Scoreboard
-from constants import log, logger_root_config, nba_teams, runtime_timestamp
+from config import log, logger_root_config, nba_teams, runtime_timestamp
 from helpers import *
 
 
@@ -132,7 +132,7 @@ def main():
     mongo_dispatcher(data=None, db_enpoint=None)
 
     # upload the data to postgresql databases
-    postgresql_dispatcher(data=None, db_enpoint=None)
+    #postgresql_dispatcher(data=None)
 
     # dump the logs into the mongo database and local catalog
     log_dump(log, datetime.today(), logs)

@@ -1159,58 +1159,18 @@ scoreboard_headers = \
   'ROAD_RECORD'],
  ['GAME_ID', 'PT_AVAILABLE']]
 
-postgresql_line_score_schema = "(id serial PRIMARY KEY, " \
-                     "away_game_date_est date, " \
-                     "away_game_sequence integer, " \
-                     "away_game_id integer, team_id integer, " \
-                     "away_team_abbreviation varchar(3)," \
-                     "away_team_city_name varchar," \
-                     "away_team_wins_losses varchar(6)," \
-                     "away_pts_qtr1 integer ," \
-                     "away_pts_qtr2 integer, " \
-                     "away_pts_qtr3 integer," \
-                     "away_pts_qtr4 integer, " \
-                     "away_pts_ot1 integer, " \
-                     "away_pts_ot2 integer," \
-                     "away_pts_ot3 integer," \
-                     "away_pts_ot4 integer," \
-                     "away_pts_ot5 integer," \
-                     "away_pts_ot6 integer," \
-                     "away_pts_ot7 integer," \
-                     "away_pts_ot8 integer," \
-                     "away_pts_ot9 integer," \
-                     "away_pts_ot10 integer," \
-                     "away_pts integer," \
-                     "away_fg_pct double precision," \
-                     "away_ft_pct double precision," \
-                     "away_fg3_pct double precision," \
-                     "away_assists integer," \
-                     "away_rebounds integer," \
-                     "away_turnovers integer," \
-                     "home_game_date_est date, " \
-                     "home_game_sequence integer, " \
-                     "home_game_id integer, team_id integer, " \
-                     "home_team_abbreviation varchar(3)," \
-                     "home_team_city_name varchar," \
-                     "home_team_wins_losses varchar(6)," \
-                     "home_pts_qtr1 integer ," \
-                     "home_pts_qtr2 integer, " \
-                     "home_pts_qtr3 integer," \
-                     "home_pts_qtr4 integer, " \
-                     "home_pts_ot1 integer, " \
-                     "home_pts_ot2 integer," \
-                     "home_pts_ot3 integer," \
-                     "home_pts_ot4 integer," \
-                     "home_pts_ot5 integer," \
-                     "home_pts_ot6 integer," \
-                     "home_pts_ot7 integer," \
-                     "home_pts_ot8 integer," \
-                     "home_pts_ot9 integer," \
-                     "home_pts_ot10 integer," \
-                     "home_pts integer," \
-                     "home_fg_pct double precision," \
-                     "home_ft_pct double precision," \
-                     "home_fg3_pct double precision," \
-                     "home_assists integer," \
-                     "home_rebounds integer," \
-                     "home_turnovers integer);"
+postgresql_line_score_values = "(away_game_date_est, away_game_sequence, away_game_id, team_id, " \
+                               "away_team_abbreviation, away_team_city_name, away_team_wins_losses, " \
+                               "away_pts_qtr1, away_pts_qtr2, away_pts_qtr3, away_pts_qtr4, " \
+                               "away_pts_ot1, away_pts_ot2, away_pts_ot3, away_pts_ot4, away_pts_ot5, " \
+                               "away_pts_ot6, away_pts_ot7, away_pts_ot8, away_pts_ot9, away_pts_ot10, " \
+                               "away_pts, away_fg_pct, away_ft_pct, away_fg3_pct, away_assists, " \
+                               "away_rebounds, away_turnovers, home_game_date_est, home_game_sequence, " \
+                               "home_game_id, team_id, home_team_abbreviation, home_team_city_name, " \
+                               "home_team_wins_losses, home_pts_qtr1, home_pts_qtr2, home_pts_qtr3, home_pts_qtr4, " \
+                               "home_pts_ot1, home_pts_ot2, home_pts_ot3, home_pts_ot4, home_pts_ot5, " \
+                               "home_pts_ot6, home_pts_ot7, home_pts_ot8, home_pts_ot9, home_pts_ot10, " \
+                               "home_pts, home_fg_pct, home_ft_pct, home_fg3_pct, home_assists, " \
+                               "home_rebounds, home_turnovers);"
+
+
