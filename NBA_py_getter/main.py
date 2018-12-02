@@ -129,7 +129,7 @@ def main():
     """
 
     # upload the data to the mongo databases
-    mongo_dispatcher(data=None, db_enpoint=None)
+    #mongo_dispatcher(data=None, db_enpoint=None)
 
     # upload the data to postgresql databases
     #postgresql_dispatcher(data=None)

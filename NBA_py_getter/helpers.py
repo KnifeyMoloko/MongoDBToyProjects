@@ -218,22 +218,84 @@ def mongo_dispatcher(data, db_enpoint):
 
 @basic_log
 def postgresql_validator(func):
+    """
+    Decorator function to validate the output of a data getter vs. PostgreSQL requirements.
+
+    :param func: function that needs to return a data set for a PostgreSQL dump
+    :return: same as param if the data passes all validations
+    """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
+        # input data and template imports
+        logging.debug("Importing postgresql_line_score_values for validations")
         from data_templates import postgresql_line_score_values as values
+        from data_templates import scoreboard_series_standing_template
+        from data_templates import last_meeting_template
+        from data_templates import east_conf_standings_by_day_template
+        from data_templates import west_conf_standings_by_day_template
         data = func(*args, **kwargs)
 
-        # assert if the data provided is a list
-        assert type(data[1]) is list, "Type assertion failed for PostgreSQL dispatcher data"
-        # assert if the provided data list is not empty
-        assert len(data[1]) != 0, "Zero-length assertion failed for PostgreSQL dispatcher data"
-        # assert the equal length of template value tuple and values list for line score
-        assert len(data[1][0][0]) == len(values.split(',')), "Length assertion failed for PostgreSQL dispatcher data"
-        #TODO: what else should we assess before packing the data and dumping into db?
-        return data
+        # assertions
 
-        #print("Assertion simulation. \n Len of data is: {} \n Len of schema rows is: {}".format(
-         #   len(postgresql_out[0][0]), len(postgresql_line_score_values.split(","))))
+        # assert if the data provided is a list
+        logging.debug("Validating postgresql dump data type")
+        assert type(data[1]) is list, "Type assertion failed for PostgreSQL dispatcher data"
+
+        # assert if the provided data list is not empty
+        logging.debug("Validating postgresql dump data size")
+        assert len(data[1]) != 0, "Zero-length assertion failed for PostgreSQL dispatcher data"
+
+        # assert the equal length of template value tuple and values list for line score
+        logging.debug("Validating line score data type")
+        assert type(data[1][0][0]) is list, "Type assertion failed for line score"
+        logging.debug("Validating line score data size vs. template")
+        assert len(data[1][0][0]) == len(values.split(',')), "Size assertion failed for line score"
+        logging.debug("Line score validations passed. Data looks good")
+
+        # assert that series standings data conforms to the template
+        logging.debug("Validating series standings data type")
+        assert type(data[1][1][0]) is list, "Type assertion failed for series standings"
+        logging.debug("Validate the series standings size is the same as the number of teams in line score")
+        assert len(data[1][1]) == len(data[1][0]), "Size assertion failed for series standings vs. line score"
+        logging.debug("Validating series standings entry size")
+        assert len(data[1][1][0]) == len(scoreboard_series_standing_template), \
+            "Size assertion failed for series standings"
+        logging.debug("Series standings validations passed. Data looks good")
+        
+        # assert that last meeting data conforms to the template
+        logging.debug("Validating last meeting data type")
+        assert type(data[1][2][0]) is list, "Type assertion failed for last meeting"
+        logging.debug("Validating size of last meeting matches size of line score")
+        assert len(data[1][2]) == len(data[1][0]), "Size assertion failed for last meeting vs line score"
+        logging.debug("Validating last meeting size")
+        assert (len(data[1][2][0])) == len(last_meeting_template), "Size assertion failed for last meeting"
+        logging.debug("Last meeting validations passed. Data looks good")
+
+        # assert east conference standings by day conform to the template
+        logging.debug("Validating east conf standings data type")
+        assert type(data[1][3]) is list, "Type assertion failed for east conference standings data"
+        logging.debug("Validating size of east conference data matches the number of east conference teams in template")
+        assert len(data[1][3]) == len(east_conf_standings_by_day_template), "Size assertion failed for east " \
+                                                                            "conference standings data"
+        logging.debug("Validating size of east conference standings row data")
+        assert len(data[1][3][0]) == len(east_conf_standings_by_day_template[0]), "Size assertion failed for east" \
+                                                                                  "conference standings row data"
+        logging.debug("East conference standings by day data validations passed. Data looks good")        
+        
+        # assert east conference standings by day conform to the template
+        logging.debug("Validating west conf standings data type")
+        assert type(data[1][4]) is list, "Type assertion failed for west conference standings data"
+        logging.debug("Validating size of west conference data matches the number of west conference teams in template")
+        assert len(data[1][4]) == len(west_conf_standings_by_day_template), "Size assertion failed for west " \
+                                                                            "conference standings data"
+        logging.debug("Validating size of west conference standings row data")
+        assert len(data[1][4][0]) == len(west_conf_standings_by_day_template[0]), "Size assertion failed for west" \
+                                                                                  "conference standings row data"
+        logging.debug("west conference standings by day data validations passed. Data looks good")
+
+        # if all asserts have passed, the data can be reasonably assumed to be valid
+        logging.info("PostgreSQL data validations passed. Data looks good")
+        return data
     return wrapper
 
     #TODO: move schemas to data_templates or other file, define schemas for the 4 different sql tables
@@ -386,8 +448,6 @@ def get_season_run(season, mongo_collection, nba_py_module):
 def pack_season_team_logs(game_logs):
     for i in game_logs:
         pass
-
-
 
 
 @basic_log
