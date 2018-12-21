@@ -8,6 +8,14 @@ import functools
 # base decorators
 
 
+def basic_debug_printer(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        to_print = func(*args, **kwargs)
+        print(to_print)
+        return to_print
+    return wrapper
+
 def basic_log(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -299,7 +307,6 @@ def postgresql_validator(func):
     return wrapper
 
     #TODO: move schemas to data_templates or other file, define schemas for the 4 different sql tables
-    #TODO: make the dispatcher asser the second item in the dispatcher's params and upload them into local sql db
     #TODO: link local sql db with remote (separate python module
     #TODO: test if remote receives data from local db
     pass
@@ -372,12 +379,6 @@ def get_line_score(func):
             output_dict['west_conf_standings_by_day']
         ]
 
-        # debug log
-        #from pprint import pprint
-        #from data_templates import postgresql_line_score_values
-        #pprint(postgresql_out[0][0])
-        #print("Assertion simulation. \n Len of data is: {} \n Len of schema rows is: {}".format(
-        #    len(postgresql_out[0][0]), len(postgresql_line_score_values.split(","))))
         return mongo_out, postgresql_out
     return wrapper
 

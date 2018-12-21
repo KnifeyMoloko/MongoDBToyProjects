@@ -1211,4 +1211,21 @@ postgresql_line_score_values = "(away_game_date_est, away_game_sequence, away_ga
                                "home_pts, home_fg_pct, home_ft_pct, home_fg3_pct, home_assists, " \
                                "home_rebounds, home_turnovers);"
 
+postgresql_series_standing_values = "(game_id, " \
+                                 "home_team_id, " \
+                                 "visitor_team_id, " \
+                                 "game_date_est, " \
+                                 "home_team_wins, " \
+                                 "home_team_losses, " \
+                                 "series_leader)"
 
+postgresql_last_meeting_values = "(game_id , last_game_id, last_game_date_est, last_game_home_team_id, " \
+                      "last_game_home_team_city, last_game_home_team_name , last_game_home_team_abbreviation, " \
+                      "last_game_home_team_points, last_game_visitor_team_id, last_game_visitor_team_city, " \
+                      "last_game_visitor_team_name, last_game_visitor_team_city1, last_game_visitor_team_points)"
+
+east_conference_standings_by_day_values = "(team_id, league_id, season_id, standings_date, conference, " \
+                                          "team, games, wins, losses, w_pct, home_record, road_record)"
+
+west_conference_standings_by_day_values = "(team_id, league_id, season_id, standings_date, conference, " \
+                                          "team, games, wins, losses, w_pct, home_record, road_record)"
