@@ -24,7 +24,7 @@ from helpers import *
 
 
 def main():
-    ### get environment variables if any ###
+    # get environment variables if any
     parsed_argv = parse_argv(argv)
 
     # set runtime flags
@@ -85,6 +85,7 @@ def main():
     if teams.find_one({}) is None:
         if first_run is True:
             seed_teams(teams, nba_teams)
+            return 0  # end the run
         else:
             print(first_run is True)
             raise LookupError

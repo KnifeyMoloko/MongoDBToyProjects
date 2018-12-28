@@ -2,50 +2,12 @@ Swell ideas:
 1. Write the data to be inserted into the PGSQL db to a local file - basically make a list of lists of comma-separated values - and then use the COPY command in psql to insert them in bulk to the target remote db. Read up on COPY first to get the formatting downn.
 
 
-
 line score CREATE TABLE values = "(id serial PRIMARY KEY, away_game_date_est date, away_game_sequence integer, away_game_id integer, away_team_id integer, away_team_abbreviation varchar(3), away_team_city_name varchar, away_team_wins_losses varchar(6), away_pts_qtr1 integer, away_pts_qtr2 integer, away_pts_qtr3 integer, away_pts_qtr4 integer, away_pts_ot1 integer, away_pts_ot2 integer, away_pts_ot3 integer, away_pts_ot4 integer, away_pts_ot5 integer, away_pts_ot6 integer, away_pts_ot7 integer, away_pts_ot8 integer, away_pts_ot9 integer, away_pts_ot10 integer, away_pts integer, away_fg_pct double precision, away_ft_pct double precision, away_fg3_pct double precision, away_assists integer, away_rebounds integer, away_turnovers integer, home_game_date_est date, home_game_sequence integer, home_game_id integer, home_team_id integer, home_team_abbreviation varchar(3), home_team_city_name varchar, home_team_wins_losses varchar(6), home_pts_qtr1 integer, home_pts_qtr2 integer, home_pts_qtr3 integer, home_pts_qtr4 integer, home_pts_ot1 integer, home_pts_ot2 integer, home_pts_ot3 integer, home_pts_ot4 integer, home_pts_ot5 integer, home_pts_ot6 integer, home_pts_ot7 integer, home_pts_ot8 integer, home_pts_ot9 integer, home_pts_ot10 integer, home_pts integer, home_fg_pct double precision, home_ft_pct double precision, home_fg3_pct double precision, home_assists integer, home_rebounds integer, home_turnovers integer);"
 
-series_standing CREATE TABLE schema = "(id serial PRIMARY KEY, " \
-                                 "game_id integer, " \
-                                 "home_team_id integer, " \
-                                 "visitor_team_id integer, " \
-                                 "game_date_est date, " \
-                                 "home_team_wins integer, " \
-                                 "home_team_losses integer, " \
-                                 "series_leader varchar;)"
+series_standing CREATE TABLE schema = "(id serial PRIMARY KEY, game_id integer, home_team_id integer, visitor_team_id integer, game_date_est date, home_team_wins integer, home_team_losses integer, series_leader varchar);"
 
-last_meeting CREATE TABLE schema = "(id serial PRIMARY KEY, game_id integer, last_game_id integer,
-                                    last_game_date_est date, last_game_home_team_id integer,
-                                    last_game_home_team_city varchar, last_game_home_team_name varchar,
-                                    last_game_home_team_abbreviation varchar, last_game_home_team_points integer,
-                                    last_game_visitor_team_id integer, last_game_visitor_team_city varchar,
-                                    last_game_visitor_team_name varchar, last_game_visitor_team_city1 varchar,
-                                    last_game_visitor_team_points integer;)"
+last_meeting CREATE TABLE schema = "(id serial PRIMARY KEY, game_id integer, last_game_id integer, last_game_date_est date, last_game_home_team_id integer, last_game_home_team_city varchar, last_game_home_team_name varchar, last_game_home_team_abbreviation varchar, last_game_home_team_points integer, last_game_visitor_team_id integer, last_game_visitor_team_city varchar, last_game_visitor_team_name varchar, last_game_visitor_team_city1 varchar, last_game_visitor_team_points integer);"
 
-east_conference_standings_by_day CREATE TABLE schema = "(id serial PRIMARY KEY,
-                                  team_id integer,
-                                  league_id integer,
-                                  season_id integer,
-                                  standings_date date,
-                                  conference varchar,
-                                  team varchar,
-                                  games integer,
-                                  wins integer,
-                                  losses integer,
-                                  w_pct double precision,
-                                  home_record varchar,
-                                  road_record varchar);"
+east_conference_standings_by_day CREATE TABLE schema = "(id serial PRIMARY KEY, team_id integer, league_id integer, season_id integer, standings_date date, conference varchar, team varchar, games integer, wins integer, losses integer, w_pct double precision, home_record varchar, road_record varchar);"
 
-west_conference_standings_by_day CREATE TABLE schema = "(id serial PRIMARY KEY,
-                                  team_id integer,
-                                  league_id integer,
-                                  season_id integer,
-                                  standings_date date,
-                                  conference varchar,
-                                  team varchar,
-                                  games integer,
-                                  wins integer,
-                                  losses integer,
-                                  w_pct double precision,
-                                  home_record varchar,
-                                  road_record varchar);"
+west_conference_standings_by_day CREATE TABLE schema = "(id serial PRIMARY KEY, team_id integer, league_id integer, season_id integer, standings_date date, conference varchar, team varchar, games integer, wins integer, losses integer, w_pct double precision, home_record varchar, road_record varchar);"

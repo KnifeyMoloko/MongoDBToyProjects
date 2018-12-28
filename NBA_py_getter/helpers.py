@@ -10,11 +10,14 @@ import functools
 
 def basic_debug_printer(func):
     @functools.wraps(func)
+
     def wrapper(*args, **kwargs):
+        from pprint import pprint
         to_print = func(*args, **kwargs)
-        print(to_print)
+        pprint(to_print)
         return to_print
     return wrapper
+
 
 def basic_log(func):
     @functools.wraps(func)
@@ -255,6 +258,7 @@ def postgresql_validator(func):
 
         # assert the equal length of template value tuple and values list for line score
         logging.debug("Validating line score data type")
+
         assert type(data[1][0][0]) is list, "Type assertion failed for line score"
         logging.debug("Validating line score data size vs. template")
         assert len(data[1][0][0]) == len(values.split(',')), "Size assertion failed for line score"
@@ -306,12 +310,12 @@ def postgresql_validator(func):
         return data
     return wrapper
 
-    #TODO: move schemas to data_templates or other file, define schemas for the 4 different sql tables
     #TODO: link local sql db with remote (separate python module
     #TODO: test if remote receives data from local db
     pass
 
 # data getters
+
 
 @basic_log
 def parse_argv(argv_list):
@@ -324,15 +328,20 @@ def parse_argv(argv_list):
     # assign default values
     first_run = no_mongo = no_postgre = is_season_run = False
     run_date = season_run_season = None
+    default_s_values = ("False", "None")
 
     # assign argv values
     output = [first_run, no_mongo, no_postgre, run_date, is_season_run, season_run_season]
     counter = 1
 
     while counter <= len(output) and len(argv_list) > 1:
-        output[counter - 1] = argv_list[counter]  # first argv param is always the python module name!
+        print("Argv value compared: {}".format(argv_list[counter]))
+        if argv_list[counter] not in default_s_values:
+            if argv_list[counter] == "True":
+                output[counter - 1] = True   # first argv param is always the python module name!
+            else:
+                output[counter-1] = argv_list[counter]
         counter = counter + 1
-    print(output)
     return output
 
 
@@ -378,6 +387,8 @@ def get_line_score(func):
             output_dict['east_conf_standings_by_day'],
             output_dict['west_conf_standings_by_day']
         ]
+
+        #TODO: add mongo output
 
         return mongo_out, postgresql_out
     return wrapper
@@ -437,9 +448,8 @@ def get_season_run(season, mongo_collection, nba_py_module):
     nba_py_mod = nba_py_module
 
     # get the team_logs
-
     games = get_season_nba_game_logs(nba_teams, season, nba_py_mod.TeamGameLogs)
-    return games, nba_teams
+    return games, nba_teams, mongo_collection
 
 
 # data manipulation funcs
@@ -452,7 +462,7 @@ def pack_season_team_logs(game_logs):
 
 
 @basic_log
-def seed_teams(mongo_collcection, team_data):
+def seed_teams(mongo_collection, team_data):
     """
     :param mongo_collcection: mongo collection to seed with data
     :param team_data: data iterable to be inserted
@@ -463,5 +473,5 @@ def seed_teams(mongo_collcection, team_data):
     for td in team_data:
         td['games'] = []
 
-    mongo_collcection.insert_many(team_data)
+    mongo_collection.insert_many(team_data)
     return True
