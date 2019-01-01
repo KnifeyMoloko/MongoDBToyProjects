@@ -207,6 +207,21 @@ def log_dump(log_container, timestamp, mongo_instance):
 
 
 @basic_log
+def postgresql_dispatcher(func):
+    """
+
+    :param func:
+    :return:
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        data = func(*args, **kwargs)
+        print(data)
+        return data
+    return wrapper
+
+@basic_log
 def mongo_dispatcher(data, db_enpoint):
     """
 
@@ -394,6 +409,7 @@ def get_line_score(func):
     return wrapper
 
 
+@postgresql_dispatcher
 @postgresql_validator
 @get_line_score
 @scoreboard_validator
@@ -453,13 +469,6 @@ def get_season_run(season, mongo_collection, nba_py_module):
 
 
 # data manipulation funcs
-
-
-@basic_log
-def pack_season_team_logs(game_logs):
-    for i in game_logs:
-        pass
-
 
 @basic_log
 def seed_teams(mongo_collection, team_data):

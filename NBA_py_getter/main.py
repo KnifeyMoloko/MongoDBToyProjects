@@ -19,8 +19,9 @@ from dateutil import parser
 from datetime import datetime
 from pathlib import Path
 from nba_py import constants, team, Scoreboard
-from config import log, logger_root_config, nba_teams, runtime_timestamp
+from config import log, logger_root_config, nba_teams, runtime_timestamp, mongodb_path
 from helpers import *
+from subprocess import Popen, TimeoutExpired
 
 
 def main():
@@ -53,16 +54,25 @@ def main():
         # use the date of runtime as run_date
         run_date = runtime_timestamp
 
-    ### set up the Mongo client ###
-    #TODO: decidde if the mongo checks should also include the service session and db path
+
+    # start the mongod process with the dbpath specified in config.py
+    subproc = Popen('mongod --dbpath ' + mongodb_path, shell=True)
+    try:
+        outs, errs = subproc.communicate(timeout=15)
+    except TimeoutExpired:
+        subproc.kill()
+        outs, errs = subproc.communicate()
+        logging.exception(outs, errs)
+
+    # set up the Mongo client
     mongo_client = pymongo.mongo_client.MongoClient()
 
-    ### set up pathlib instance for local log file manipulations ###
+    # set up pathlib instance for local log file manipulations
 
     path = Path('.')/'logs'
     path.mkdir(parents=True, exist_ok=True)
 
-    ### set up and configure root logger here ###
+    #set up and configure root logger here
 
     log_config.dictConfig(logger_root_config)
     logger = logging.getLogger(__name__)  # name the logger with the module name

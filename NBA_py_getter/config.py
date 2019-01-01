@@ -9,6 +9,14 @@ from io import StringIO
 season = "2017-18"
 log = StringIO()  # container for logs
 runtime_timestamp = datetime.today()
+mongodb_path = '/home/newton/Programming/MDB/'
+local_postgresql_db = {
+    "line score": "nba1819_line_score",
+    "series standing": "nba1819_series_standing",
+    "last meeting": "nba1819_last_meeting",
+    "east_standings": "nba1819_east_conference_standings_by_day",
+    "west standings": "nba1819_west_conference_standings_by_day"
+}
 
 
 # Logger object configuration
