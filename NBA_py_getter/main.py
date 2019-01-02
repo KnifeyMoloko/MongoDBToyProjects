@@ -56,13 +56,8 @@ def main():
 
 
     # start the mongod process with the dbpath specified in config.py
-    subproc = Popen('mongod --dbpath ' + mongodb_path, shell=True)
-    try:
-        outs, errs = subproc.communicate(timeout=15)
-    except TimeoutExpired:
-        subproc.kill()
-        outs, errs = subproc.communicate()
-        logging.exception(outs, errs)
+    Popen('mongod --dbpath ' + mongodb_path, shell=True)
+    #TODO: capture the Popen output into the log file, think about error handling here
 
     # set up the Mongo client
     mongo_client = pymongo.mongo_client.MongoClient()

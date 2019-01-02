@@ -1,5 +1,6 @@
 import logging
 import functools
+import psycopg2
 
 
 # helper functions for NBA_py_getter
@@ -213,11 +214,59 @@ def postgresql_dispatcher(func):
     :param func:
     :return:
     """
+    from config import postgresql_username, postgresql_dbname, postgresql_host_type, local_postgresql_db
+    from data_templates import postgresql_line_score_values, \
+        postgresql_series_standing_values, \
+        postgresql_last_meeting_values,\
+        east_conference_standings_by_day_values, \
+        west_conference_standings_by_day_values
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
+        # get data from the input function
         data = func(*args, **kwargs)
-        print(data)
+        values = [postgresql_line_score_values,
+                  postgresql_series_standing_values,
+                  postgresql_last_meeting_values,
+                  east_conference_standings_by_day_values,
+                  west_conference_standings_by_day_values]
+
+        # check if the number of data objects is the same as the number of db enpoints
+        assert len(local_postgresql_db) == len(data[1]), "Size mismatch between local db enpoints and data points"
+
+        # create the config string for the psycopg2 connection
+        pg_command = "dbname={} user={} host={}"\
+            .format(postgresql_dbname, postgresql_username, postgresql_host_type)
+
+        # create psycopg2 connection
+        conn = psycopg2.connect(pg_command)
+
+        # create db cursor
+        cursor = conn.cursor()
+
+        """        postgresql_out = [
+            zipped_line_score,
+            output_dict['series_standings'],
+            output_dict['last_meeting'],
+            output_dict['east_conf_standings_by_day'],
+            output_dict['west_conf_standings_by_day']
+        ]"""
+
+        zipped = zip(values, data[1])
+        counter = 0
+        for z in zipped:
+            dbname = local_postgresql_db[counter]
+            counter += 1
+            for i in range(0, len(z[1])):
+                # z[0] for values, cast z[1][i] as string and slice to remove list brackets
+                #print(z[0], str(z[1][i])[1:-1])
+                db_command = "INSERT INTO {db} {fields} VALUES ({val});"\
+                    .format(db=dbname, fields=z[0], val=str(z[1][i])[1:-1])
+                cursor.execute(db_command)
+        #TODO: add loggers and document the whole thing
+        conn.commit()
+        cursor.close()
+        conn.close()
         return data
     return wrapper
 

@@ -1197,19 +1197,19 @@ west_conf_standings_by_day_template = [
     [1610612759, '00', '22018', '12/01/2018', 'West', 'San Antonio', 22, 10, 12, 0.455, '6-4', '4-8'],
     [1610612756, '00', '22018', '12/01/2018', 'West', 'Phoenix', 22, 4, 18, 0.182, '3-8', '1-10']]
 
-postgresql_line_score_values = "(away_game_date_est, away_game_sequence, away_game_id, team_id, " \
+postgresql_line_score_values = "(away_game_date_est, away_game_sequence, away_game_id, away_team_id, " \
                                "away_team_abbreviation, away_team_city_name, away_team_wins_losses, " \
                                "away_pts_qtr1, away_pts_qtr2, away_pts_qtr3, away_pts_qtr4, " \
                                "away_pts_ot1, away_pts_ot2, away_pts_ot3, away_pts_ot4, away_pts_ot5, " \
                                "away_pts_ot6, away_pts_ot7, away_pts_ot8, away_pts_ot9, away_pts_ot10, " \
                                "away_pts, away_fg_pct, away_ft_pct, away_fg3_pct, away_assists, " \
                                "away_rebounds, away_turnovers, home_game_date_est, home_game_sequence, " \
-                               "home_game_id, team_id, home_team_abbreviation, home_team_city_name, " \
+                               "home_game_id, home_team_id, home_team_abbreviation, home_team_city_name, " \
                                "home_team_wins_losses, home_pts_qtr1, home_pts_qtr2, home_pts_qtr3, home_pts_qtr4, " \
                                "home_pts_ot1, home_pts_ot2, home_pts_ot3, home_pts_ot4, home_pts_ot5, " \
                                "home_pts_ot6, home_pts_ot7, home_pts_ot8, home_pts_ot9, home_pts_ot10, " \
                                "home_pts, home_fg_pct, home_ft_pct, home_fg3_pct, home_assists, " \
-                               "home_rebounds, home_turnovers);"
+                               "home_rebounds, home_turnovers)"
 
 postgresql_series_standing_values = "(game_id, " \
                                  "home_team_id, " \
