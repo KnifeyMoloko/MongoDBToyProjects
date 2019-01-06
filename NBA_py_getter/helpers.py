@@ -210,11 +210,28 @@ def log_dump(log_container, timestamp, mongo_instance):
 @basic_log
 def postgresql_dispatcher(func):
     """
+    This function takes a previous function that returns the postgresql data
+    (along with the mongodb data) and dispatches the postgresql portion of
+    the data to a postgresql db defined in the config.py file. The required
+    config data is: postgresql_username, postgresql_dbname,
+    postgresql_host_type as well as a list of table names equal in length
+    to the data being processed (i.e. 6 packets of data that need to be
+    dispatched to 6 tables in the db) - the tables are defined in config
+    as local_postgresql_db. The function also requires that the column names
+    (values) for each table be defined in the data_templates.py file.
+    This function works as a decorator for the download - validate - format -
+    dispatch process.
+    The return of this function is the same as it's input (both db's data),
+    the function's value being in it's side effects.
 
-    :param func:
-    :return:
+    :param func: the function returned by the postgresql_validator function
+    or the get_line_score function
+    :return: same return as the func input: a tuple (mongodb_data,
+    postgresql_data) with preformatted data for both db's dispatchers
     """
-    from config import postgresql_username, postgresql_dbname, postgresql_host_type, local_postgresql_db
+    # data dependecies imports
+    from config import postgresql_username, postgresql_dbname, \
+        postgresql_host_type, local_postgresql_db
     from data_templates import postgresql_line_score_values, \
         postgresql_series_standing_values, \
         postgresql_last_meeting_values,\
@@ -225,48 +242,59 @@ def postgresql_dispatcher(func):
     def wrapper(*args, **kwargs):
         # get data from the input function
         data = func(*args, **kwargs)
+
+        # pack data templates into a list for iteration
         values = [postgresql_line_score_values,
                   postgresql_series_standing_values,
                   postgresql_last_meeting_values,
                   east_conference_standings_by_day_values,
                   west_conference_standings_by_day_values]
 
-        # check if the number of data objects is the same as the number of db enpoints
-        assert len(local_postgresql_db) == len(data[1]), "Size mismatch between local db enpoints and data points"
+        # check if the number of data objects is the same as the number of db endpoints
+        assert len(local_postgresql_db) == len(data[1]), "Size mismatch between local db endpoints and data points"
+        logging.debug("Passed size assertion between postgresql data and local db table count.")
 
         # create the config string for the psycopg2 connection
         pg_command = "dbname={} user={} host={}"\
             .format(postgresql_dbname, postgresql_username, postgresql_host_type)
 
         # create psycopg2 connection
+        logging.info("Creating pscyopg2 db connection...")
         conn = psycopg2.connect(pg_command)
 
         # create db cursor
         cursor = conn.cursor()
 
-        """        postgresql_out = [
-            zipped_line_score,
-            output_dict['series_standings'],
-            output_dict['last_meeting'],
-            output_dict['east_conf_standings_by_day'],
-            output_dict['west_conf_standings_by_day']
-        ]"""
-
+        # for each table zip it's column names (values) with the relevant data
         zipped = zip(values, data[1])
+
+        # create a counter var, since it's more readable than another for loop
         counter = 0
+
+        logging.debug("Looping over the postgresql data zipped with values. Creating SQL.")
         for z in zipped:
+            # assign table name
             dbname = local_postgresql_db[counter]
             counter += 1
+
             for i in range(0, len(z[1])):
-                # z[0] for values, cast z[1][i] as string and slice to remove list brackets
-                #print(z[0], str(z[1][i])[1:-1])
+                # z[0] for values in the zipped var,
+                # cast z[1][i] as string and slice to remove list brackets
+
+                # create SQL command
                 db_command = "INSERT INTO {db} {fields} VALUES ({val});"\
                     .format(db=dbname, fields=z[0], val=str(z[1][i])[1:-1])
+
+                # execute prepared SQL command
                 cursor.execute(db_command)
-        #TODO: add loggers and document the whole thing
+
+        # commit all of the inserts to db, close cursor and db connection
+        logging.info("Committing inserts to local db...")
         conn.commit()
         cursor.close()
         conn.close()
+        logging.info("Committing inserts to local db DONE. Closed connection.")
+
         return data
     return wrapper
 
