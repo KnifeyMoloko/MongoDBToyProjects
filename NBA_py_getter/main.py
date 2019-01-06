@@ -36,6 +36,8 @@ def main():
     run_date = parsed_argv[3]
     is_season_run = bool(parsed_argv[4])
     season_run_season = parsed_argv[5]
+    email = bool(parsed_argv[6])
+
     logging.info("Setting runtime flags: ", str(parsed_argv))
     logging.info("Setting runtime flags - END.")
 
@@ -106,44 +108,13 @@ def main():
     logging.info("Run date is: " + str(run_date))
 
     # fetch the Scoreboard json dump
-    scoreboard = get_scoreboard(date, Scoreboard)
-
-    # check if there are games available
-
-    #TODO: rework this into decorators
-    """ strucuture:
-    has_games ret: scoreboard if True 
-        >>> line_score ret: scoreboard, [{"date": date, "line_score": line_score...}] 
-        >>> series_standinds 
-        >>> last_meeting 
-        >>> standings
-    then validate elements
-    then format elements (split by team_id?) (split the line_score by game_id for postgre!)
-    then dispatch to postgre (line_score, series_standings, last_meeting, standings?)
-    then dispatch to mongo
-    line_score = get_line_score(scoreboard)  # prime source for the web page and game db
-    series_standings = get_series_standings(scoreboard)  # link to the game db?
-    last_meeting = get_last_meeting(scoreboard)  # link to the game db
-    standings = get_conference_standings(scoreboard)  # only useful for the web page
-    """
-
-    """
-    row_set = (scoreboard["resultSets"][1]["rowSet"])
-    # this is essentialy the daily scores layout, though it might make more sense to put it in the SQL db
-    for a, h in zip(row_set[::2], row_set[1::2]):
-        print(a[4], a[21], " : ", h[4], h[21])
-    """
-
-    # upload the data to the mongo databases
-    #mongo_dispatcher(data=None, db_enpoint=None)
-
-    # upload the data to postgresql databases
-    #postgresql_dispatcher(data=None)
-
-    # dump the logs into the mongo database and local catalog
-    log_dump(log, datetime.today(), logs)
-
-    #TODO: decide on the data model that I want to use: what to keep and in what form
+    try:
+        scoreboard = get_scoreboard(date, Scoreboard)
+    finally:
+        # dump the logs into the mongo database and local catalog
+        from config import log
+        log_dump(log, datetime.today(), logs)
+        send_logs_to_email(log.getvalue())
 
 
 if __name__ == "__main__":

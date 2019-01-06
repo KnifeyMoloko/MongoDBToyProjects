@@ -71,6 +71,9 @@ def get_headers(func):
         return output
     return wrapper
 
+# email sender
+
+
 
 # validators
 
@@ -418,12 +421,12 @@ def parse_argv(argv_list):
     :return: [first_run, no_mongo, no_postgre, run_date, is_season_run, seasons_run_season]
     """
     # assign default values
-    first_run = no_mongo = no_postgre = is_season_run = False
+    first_run = no_mongo = no_postgre = is_season_run = email = False
     run_date = season_run_season = None
     default_s_values = ("False", "None")
 
     # assign argv values
-    output = [first_run, no_mongo, no_postgre, run_date, is_season_run, season_run_season]
+    output = [first_run, no_mongo, no_postgre, run_date, is_season_run, season_run_season, email]
     counter = 1
 
     while counter <= len(output) and len(argv_list) > 1:
@@ -561,3 +564,42 @@ def seed_teams(mongo_collection, team_data):
 
     mongo_collection.insert_many(team_data)
     return True
+
+
+def send_logs_to_email(to_send):
+    """
+
+    :param to_send:
+    :return:
+    """
+    assert to_send is not None, "The body of the e-mail was set to None"
+
+    # imports
+
+    import smtplib
+    from email.mime.text import MIMEText
+
+    # prompt user for address and password
+    username = input("Please provide e-mail address to send the e-mail: ")
+    password = input("Please provide e-mail password: ")
+
+    # define the e-mail message
+    msg = MIMEText(str(to_send), 'plain')
+    msg['From'] = username
+    msg['To'] = username
+    msg['Subject'] = 'NBA_py_getter log'
+
+    # create SMTP session
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+
+    # start TLS
+    s.starttls()
+
+    # login
+    s.login(username, password)
+
+    # send the mail
+    s.sendmail(username, username, msg.as_string())
+
+    # terminate session
+    s.quit()
