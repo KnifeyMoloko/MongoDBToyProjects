@@ -1,6 +1,7 @@
 import logging
 import functools
 import psycopg2
+import subprocess
 
 
 # helper functions for NBA_py_getter
@@ -211,7 +212,7 @@ def log_dump(log_container, timestamp, mongo_instance):
 
 
 @basic_log
-def postgresql_dispatcher(func):
+def postgresql_dispatcher_local(func):
     """
     This function takes a previous function that returns the postgresql data
     (along with the mongodb data) and dispatches the postgresql portion of
@@ -300,6 +301,100 @@ def postgresql_dispatcher(func):
 
         return data
     return wrapper
+
+
+def postgresql_dispatcher_remote(func):
+    """
+    This function takes a previous function that returns the postgresql data
+    (along with the mongodb data) and dispatches the postgresql portion of
+    the data to a remote postgresql db defined in the config.py file.
+    The required config data is: remote_postgresql_db (names), equal in
+    length to the data being processed (i.e. 6 packets of data that need to be
+    dispatched to 6 tables in the db) - the tables are defined in config
+    as remote_postgresql_db. The function also requires that the column names
+    (values) for each table be defined in the data_templates.py file.
+    This function works as a decorator for the download - validate - format -
+    dispatch process.
+    The return of this function is the same as it's input (both db's data),
+    the function's value being in it's side effects.
+
+    :param func: the function returned by the postgresql_validator function
+    or the get_line_score function
+    :return: same return as the func input: a tuple (mongodb_data,
+    postgresql_data) with preformatted data for both db's dispatchers
+    """
+    # data dependecies imports
+    from config import remote_postgresql_db
+    from data_templates import postgresql_line_score_values, \
+        postgresql_series_standing_values, \
+        postgresql_last_meeting_values,\
+        east_conference_standings_by_day_values, \
+        west_conference_standings_by_day_values
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        # get data from the input function
+        data = func(*args, **kwargs)
+
+        # pack data templates into a list for iteration
+        values = [postgresql_line_score_values,
+                  postgresql_series_standing_values,
+                  postgresql_last_meeting_values,
+                  east_conference_standings_by_day_values,
+                  west_conference_standings_by_day_values]
+
+        # check if the number of data objects is the same as the number of db endpoints
+        assert len(remote_postgresql_db) == len(data[1]), "Size mismatch between local db endpoints and data points"
+        logging.debug("Passed size assertion between postgresql data and local db table count.")
+
+        # fetch the postgresql db connection details using a bash command
+        bash_command = "heroku pg:credentials:url DATABASE -a nba-scores-daily"
+        bash_call = subprocess.check_output(bash_command.split(), universal_newlines=True).split("\n")
+
+        # split up the bash command output into meaningful psycopg2 params
+        full_connection_url = bash_call[-2]
+        logging.debug("Remote postgresql db connection url: {}".format(full_connection_url))
+        info_string = bash_call[2][4:-1]
+
+        # establish connection to the db
+        conn = psycopg2.connect(info_string)
+
+        # open a cursor to perform db operations
+        db_cursor = conn.cursor()
+
+        # for each table zip it's column names (values) with the relevant data
+        zipped = zip(values, data[1])
+
+        # create a counter var, since it's more readable than another for loop
+        counter = 0
+
+        logging.debug("Looping over the postgresql data zipped with values. Creating SQL for remote db.")
+        for z in zipped:
+            # assign table name
+            dbname = remote_postgresql_db[counter]
+            counter += 1
+
+            for i in range(0, len(z[1])):
+                # z[0] for values in the zipped var,
+                # cast z[1][i] as string and slice to remove list brackets
+
+                # create SQL command
+                db_command = "INSERT INTO {db} {fields} VALUES ({val});"\
+                    .format(db=dbname, fields=z[0], val=str(z[1][i])[1:-1])
+
+                # execute prepared SQL command
+                db_cursor.execute(db_command)
+
+        # commit all of the inserts to db, close cursor and db connection
+        logging.info("Committing inserts to remote db...")
+        conn.commit()
+        db_cursor.close()
+        conn.close()
+        logging.info("Committing inserts to remote db DONE. Closed connection.")
+
+        return data
+    return wrapper
+
 
 @basic_log
 def mongo_dispatcher(data, db_enpoint):
@@ -489,7 +584,8 @@ def get_line_score(func):
     return wrapper
 
 
-@postgresql_dispatcher
+@postgresql_dispatcher_remote
+@postgresql_dispatcher_local
 @postgresql_validator
 @get_line_score
 @scoreboard_validator

@@ -3,9 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="ba56e4ae-08a9-436e-a156-2c29842e0a1d" name="Default Changelist" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NBA_py_getter/nba_cache.sqlite" afterPath="$PROJECT_DIR$/NBA_py_getter/nba_cache.sqlite" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NBA_py_getter/config.py" afterPath="$PROJECT_DIR$/NBA_py_getter/config.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NBA_py_getter/helpers.py" afterPath="$PROJECT_DIR$/NBA_py_getter/helpers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NBA_py_getter/main.py" afterPath="$PROJECT_DIR$/NBA_py_getter/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NBA_py_getter/pgtest.py" afterPath="$PROJECT_DIR$/NBA_py_getter/pgtest.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,6 +17,7 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/NBA_py_getter$email_with_backdate.coverage" NAME="email with backdate Coverage Results" MODIFIED="1546808498232" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NBA_py_getter" />
     <SUITE FILE_PATH="coverage/MongoDBToyProjects$OECD_Household_Data_Getter.coverage" NAME="OECD_Household_Data_Getter Coverage Results" MODIFIED="1534504217275" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/NBA_py_getter$main_with_email.coverage" NAME="main with email Coverage Results" MODIFIED="1546892706262" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NBA_py_getter" />
     <SUITE FILE_PATH="coverage/NBA_py_getter$main.coverage" NAME="main Coverage Results" MODIFIED="1546798606216" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NBA_py_getter" />
     <SUITE FILE_PATH="coverage/NBA_py_getter$main__with_params.coverage" NAME="main _with_params Coverage Results" MODIFIED="1546805019062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NBA_py_getter" />
     <SUITE FILE_PATH="coverage/NBA_py_getter$pgtest.coverage" NAME="pgtest Coverage Results" MODIFIED="1546382889361" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NBA_py_getter" />
@@ -57,7 +58,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/NBA_py_getter/main.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1972">
@@ -72,33 +73,33 @@
       <file leaf-file-name="helpers.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/NBA_py_getter/helpers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="669">
-              <caret line="589" column="39" lean-forward="false" selection-start-line="589" selection-start-column="22" selection-end-line="589" selection-end-column="39" />
+            <state relative-caret-position="2499">
+              <caret line="585" column="0" lean-forward="false" selection-start-line="585" selection-start-column="0" selection-end-line="585" selection-end-column="0" />
               <folding>
-                <element signature="e#0#14#0" expanded="true" />
-                <element signature="e#144#344#0" expanded="false" />
-                <element signature="e#372#753#0" expanded="false" />
-                <element signature="e#784#1070#0" expanded="false" />
-                <element signature="e#1105#1318#0" expanded="false" />
-                <element signature="e#1349#1641#0" expanded="false" />
-                <element signature="e#1728#2672#0" expanded="false" />
-                <element signature="e#2967#4996#0" expanded="false" />
-                <element signature="e#2967#3803#1" expanded="false" />
-                <element signature="e#5046#6111#0" expanded="false" />
-                <element signature="e#6203#6795#0" expanded="false" />
-                <element signature="e#6846#7989#1" expanded="false" />
-                <element signature="e#10818#11353#0" expanded="false" />
-                <element signature="e#11403#16813#0" expanded="false" />
-                <element signature="e#16874#17926#0" expanded="false" />
-                <element signature="e#17970#19530#0" expanded="false" />
-                <element signature="e#21332#21558#0" expanded="false" />
-                <element signature="e#21648#22101#0" expanded="false" />
-                <marker date="1546808343815" expanded="true" signature="10232:10248" ph="INSERT INTO " />
-                <marker date="1546808343815" expanded="true" signature="10232:10249" ph="INSERT INTO missing_value... " />
-                <marker date="1546808343815" expanded="true" signature="10232:10257" ph="INSERT INTO " />
-                <marker date="1546808343815" expanded="true" signature="10232:10264" ph="INSERT INTO missing_value... " />
-                <marker date="1546808343815" expanded="true" signature="10232:10265" ph="INSERT INTO missing_value... " />
-                <marker date="1546808343815" expanded="true" signature="10232:10272" ph="INSERT INTO missing_value... " />
+                <element signature="e#162#362#0" expanded="false" />
+                <element signature="e#390#771#0" expanded="false" />
+                <element signature="e#802#1088#0" expanded="false" />
+                <element signature="e#1123#1336#0" expanded="false" />
+                <element signature="e#1367#1659#0" expanded="false" />
+                <element signature="e#1746#2690#0" expanded="false" />
+                <element signature="e#2985#5014#0" expanded="false" />
+                <element signature="e#2985#3821#1" expanded="false" />
+                <element signature="e#5064#6129#0" expanded="false" />
+                <element signature="e#6221#6813#0" expanded="false" />
+                <element signature="e#6870#10785#0" expanded="false" />
+                <element signature="e#14985#15520#0" expanded="false" />
+                <element signature="e#15570#20980#0" expanded="false" />
+                <element signature="e#21041#22093#0" expanded="false" />
+                <element signature="e#22137#23697#0" expanded="false" />
+                <element signature="e#25535#25761#0" expanded="false" />
+                <element signature="e#25851#26304#0" expanded="false" />
+                <marker date="1546892595946" expanded="true" signature="10256:10272" ph="INSERT INTO " />
+                <marker date="1546892595946" expanded="true" signature="10256:10273" ph="INSERT INTO missing_value... " />
+                <marker date="1546892595946" expanded="true" signature="10256:10281" ph="INSERT INTO " />
+                <marker date="1546892595946" expanded="true" signature="10256:10288" ph="INSERT INTO missing_value... " />
+                <marker date="1546892595946" expanded="true" signature="10256:10289" ph="INSERT INTO missing_value... " />
+                <marker date="1546892595946" expanded="true" signature="10256:10296" ph="INSERT INTO missing_value... " />
+                <marker date="1546892595946" expanded="true" signature="14390:14430" ph="INSERT INTO missing_value... " />
               </folding>
             </state>
           </provider>
@@ -107,7 +108,7 @@
       <file leaf-file-name="data_templates.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/NBA_py_getter/data_templates.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2516">
+            <state relative-caret-position="513">
               <caret line="1206" column="72" lean-forward="false" selection-start-line="1206" selection-start-column="72" selection-end-line="1206" selection-end-column="72" />
               <folding />
             </state>
@@ -134,12 +135,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="config.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="config.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/NBA_py_getter/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="7" column="16" lean-forward="false" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
+            <state relative-caret-position="272">
+              <caret line="17" column="47" lean-forward="false" selection-start-line="17" selection-start-column="47" selection-end-line="17" selection-end-column="47" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pgtest.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/NBA_py_getter/pgtest.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="11" column="32" lean-forward="false" selection-start-line="11" selection-start-column="32" selection-end-line="11" selection-end-column="32" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+                <marker date="1546892394878" expanded="true" signature="774:819" ph="INSERT INTO test1... " />
+                <marker date="1546892394878" expanded="true" signature="867:886" ph="SELECT * FRO... test1" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -183,10 +198,10 @@
         <option value="$PROJECT_DIR$/OECD_Household_Data_Getter.py" />
         <option value="$PROJECT_DIR$/NBA_py_getter/nba_py_notes" />
         <option value="$PROJECT_DIR$/NBA_py_getter/postgres_notes" />
-        <option value="$PROJECT_DIR$/NBA_py_getter/pgtest.py" />
         <option value="$PROJECT_DIR$/NBA_py_getter/data_templates.py" />
-        <option value="$PROJECT_DIR$/NBA_py_getter/config.py" />
         <option value="$PROJECT_DIR$/NBA_py_getter/main.py" />
+        <option value="$PROJECT_DIR$/NBA_py_getter/config.py" />
+        <option value="$PROJECT_DIR$/NBA_py_getter/pgtest.py" />
         <option value="$PROJECT_DIR$/NBA_py_getter/helpers.py" />
       </list>
     </option>
@@ -218,7 +233,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -236,6 +250,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -257,7 +272,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.main with email">
     <configuration name="OECD_Household_Data_Getter" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -330,6 +345,24 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
+    <configuration name="main with email" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="/usr/bin/python3.6" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/NBA_py_getter" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="MongoDBToyProjects" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/NBA_py_getter/main.py" />
+      <option name="PARAMETERS" value="False False False None False None True" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -366,13 +399,14 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
-    <list size="6">
-      <item index="0" class="java.lang.String" itemvalue="Python.main" />
-      <item index="1" class="java.lang.String" itemvalue="Python.email with backdate" />
-      <item index="2" class="java.lang.String" itemvalue="Python.main _with_params" />
-      <item index="3" class="java.lang.String" itemvalue="Python.OECD_Household_Data_Getter" />
-      <item index="4" class="java.lang.String" itemvalue="Python.data_templates" />
-      <item index="5" class="java.lang.String" itemvalue="Python.pgtest" />
+    <list size="7">
+      <item index="0" class="java.lang.String" itemvalue="Python.main with email" />
+      <item index="1" class="java.lang.String" itemvalue="Python.main" />
+      <item index="2" class="java.lang.String" itemvalue="Python.email with backdate" />
+      <item index="3" class="java.lang.String" itemvalue="Python.main _with_params" />
+      <item index="4" class="java.lang.String" itemvalue="Python.OECD_Household_Data_Getter" />
+      <item index="5" class="java.lang.String" itemvalue="Python.data_templates" />
+      <item index="6" class="java.lang.String" itemvalue="Python.pgtest" />
     </list>
     <recent_temporary>
       <list size="2">
@@ -408,9 +442,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="83" y="-275" width="1366" height="734" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2560606" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25984848" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32888147" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31051752" sideWeight="0.5030303" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -458,30 +491,30 @@
         <state relative-caret-position="1734">
           <caret line="449" column="23" lean-forward="false" selection-start-line="449" selection-start-column="23" selection-end-line="449" selection-end-column="23" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#144#344#0" expanded="false" />
-            <element signature="e#372#753#0" expanded="false" />
-            <element signature="e#784#1070#0" expanded="false" />
-            <element signature="e#1105#1318#0" expanded="false" />
-            <element signature="e#1349#1641#0" expanded="false" />
-            <element signature="e#1728#2672#0" expanded="false" />
-            <element signature="e#2967#4996#0" expanded="false" />
-            <element signature="e#2967#3803#1" expanded="false" />
-            <element signature="e#5046#6111#0" expanded="false" />
-            <element signature="e#6203#6795#0" expanded="false" />
-            <element signature="e#6846#7989#1" expanded="false" />
-            <element signature="e#10818#11353#0" expanded="false" />
-            <element signature="e#11403#16813#0" expanded="false" />
-            <element signature="e#16874#17926#0" expanded="false" />
-            <element signature="e#17970#19530#0" expanded="false" />
-            <element signature="e#21332#21558#0" expanded="false" />
-            <element signature="e#21648#22101#0" expanded="false" />
-            <marker date="1546808343815" expanded="true" signature="10232:10248" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10249" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10257" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10264" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10265" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10272" ph="INSERT INTO missing_value... " />
+            <element signature="e#162#362#0" expanded="false" />
+            <element signature="e#390#771#0" expanded="false" />
+            <element signature="e#802#1088#0" expanded="false" />
+            <element signature="e#1123#1336#0" expanded="false" />
+            <element signature="e#1367#1659#0" expanded="false" />
+            <element signature="e#1746#2690#0" expanded="false" />
+            <element signature="e#2985#5014#0" expanded="false" />
+            <element signature="e#2985#3821#1" expanded="false" />
+            <element signature="e#5064#6129#0" expanded="false" />
+            <element signature="e#6221#6813#0" expanded="false" />
+            <element signature="e#6870#10785#0" expanded="false" />
+            <element signature="e#14985#15520#0" expanded="false" />
+            <element signature="e#15570#20980#0" expanded="false" />
+            <element signature="e#21041#22093#0" expanded="false" />
+            <element signature="e#22137#23697#0" expanded="false" />
+            <element signature="e#25535#25761#0" expanded="false" />
+            <element signature="e#25851#26304#0" expanded="false" />
+            <marker date="1546892595946" expanded="true" signature="10256:10272" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10273" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10281" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10288" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10289" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10296" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="14390:14430" ph="INSERT INTO missing_value... " />
           </folding>
         </state>
       </provider>
@@ -501,30 +534,30 @@
         <state relative-caret-position="1734">
           <caret line="449" column="23" lean-forward="false" selection-start-line="449" selection-start-column="23" selection-end-line="449" selection-end-column="23" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#144#344#0" expanded="false" />
-            <element signature="e#372#753#0" expanded="false" />
-            <element signature="e#784#1070#0" expanded="false" />
-            <element signature="e#1105#1318#0" expanded="false" />
-            <element signature="e#1349#1641#0" expanded="false" />
-            <element signature="e#1728#2672#0" expanded="false" />
-            <element signature="e#2967#4996#0" expanded="false" />
-            <element signature="e#2967#3803#1" expanded="false" />
-            <element signature="e#5046#6111#0" expanded="false" />
-            <element signature="e#6203#6795#0" expanded="false" />
-            <element signature="e#6846#7989#1" expanded="false" />
-            <element signature="e#10818#11353#0" expanded="false" />
-            <element signature="e#11403#16813#0" expanded="false" />
-            <element signature="e#16874#17926#0" expanded="false" />
-            <element signature="e#17970#19530#0" expanded="false" />
-            <element signature="e#21332#21558#0" expanded="false" />
-            <element signature="e#21648#22101#0" expanded="false" />
-            <marker date="1546808343815" expanded="true" signature="10232:10248" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10249" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10257" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10264" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10265" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10272" ph="INSERT INTO missing_value... " />
+            <element signature="e#162#362#0" expanded="false" />
+            <element signature="e#390#771#0" expanded="false" />
+            <element signature="e#802#1088#0" expanded="false" />
+            <element signature="e#1123#1336#0" expanded="false" />
+            <element signature="e#1367#1659#0" expanded="false" />
+            <element signature="e#1746#2690#0" expanded="false" />
+            <element signature="e#2985#5014#0" expanded="false" />
+            <element signature="e#2985#3821#1" expanded="false" />
+            <element signature="e#5064#6129#0" expanded="false" />
+            <element signature="e#6221#6813#0" expanded="false" />
+            <element signature="e#6870#10785#0" expanded="false" />
+            <element signature="e#14985#15520#0" expanded="false" />
+            <element signature="e#15570#20980#0" expanded="false" />
+            <element signature="e#21041#22093#0" expanded="false" />
+            <element signature="e#22137#23697#0" expanded="false" />
+            <element signature="e#25535#25761#0" expanded="false" />
+            <element signature="e#25851#26304#0" expanded="false" />
+            <marker date="1546892595946" expanded="true" signature="10256:10272" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10273" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10281" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10288" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10289" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10296" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="14390:14430" ph="INSERT INTO missing_value... " />
           </folding>
         </state>
       </provider>
@@ -574,30 +607,30 @@
         <state relative-caret-position="5440">
           <caret line="320" column="0" lean-forward="true" selection-start-line="320" selection-start-column="0" selection-end-line="320" selection-end-column="0" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#144#344#0" expanded="false" />
-            <element signature="e#372#753#0" expanded="false" />
-            <element signature="e#784#1070#0" expanded="false" />
-            <element signature="e#1105#1318#0" expanded="false" />
-            <element signature="e#1349#1641#0" expanded="false" />
-            <element signature="e#1728#2672#0" expanded="false" />
-            <element signature="e#2967#4996#0" expanded="false" />
-            <element signature="e#2967#3803#1" expanded="false" />
-            <element signature="e#5046#6111#0" expanded="false" />
-            <element signature="e#6203#6795#0" expanded="false" />
-            <element signature="e#6846#7989#1" expanded="false" />
-            <element signature="e#10818#11353#0" expanded="false" />
-            <element signature="e#11403#16813#0" expanded="false" />
-            <element signature="e#16874#17926#0" expanded="false" />
-            <element signature="e#17970#19530#0" expanded="false" />
-            <element signature="e#21332#21558#0" expanded="false" />
-            <element signature="e#21648#22101#0" expanded="false" />
-            <marker date="1546808343815" expanded="true" signature="10232:10248" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10249" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10257" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10264" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10265" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10272" ph="INSERT INTO missing_value... " />
+            <element signature="e#162#362#0" expanded="false" />
+            <element signature="e#390#771#0" expanded="false" />
+            <element signature="e#802#1088#0" expanded="false" />
+            <element signature="e#1123#1336#0" expanded="false" />
+            <element signature="e#1367#1659#0" expanded="false" />
+            <element signature="e#1746#2690#0" expanded="false" />
+            <element signature="e#2985#5014#0" expanded="false" />
+            <element signature="e#2985#3821#1" expanded="false" />
+            <element signature="e#5064#6129#0" expanded="false" />
+            <element signature="e#6221#6813#0" expanded="false" />
+            <element signature="e#6870#10785#0" expanded="false" />
+            <element signature="e#14985#15520#0" expanded="false" />
+            <element signature="e#15570#20980#0" expanded="false" />
+            <element signature="e#21041#22093#0" expanded="false" />
+            <element signature="e#22137#23697#0" expanded="false" />
+            <element signature="e#25535#25761#0" expanded="false" />
+            <element signature="e#25851#26304#0" expanded="false" />
+            <marker date="1546892595946" expanded="true" signature="10256:10272" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10273" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10281" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10288" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10289" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10296" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="14390:14430" ph="INSERT INTO missing_value... " />
           </folding>
         </state>
       </provider>
@@ -677,30 +710,30 @@
         <state relative-caret-position="5304">
           <caret line="312" column="23" lean-forward="true" selection-start-line="312" selection-start-column="23" selection-end-line="312" selection-end-column="23" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#144#344#0" expanded="false" />
-            <element signature="e#372#753#0" expanded="false" />
-            <element signature="e#784#1070#0" expanded="false" />
-            <element signature="e#1105#1318#0" expanded="false" />
-            <element signature="e#1349#1641#0" expanded="false" />
-            <element signature="e#1728#2672#0" expanded="false" />
-            <element signature="e#2967#4996#0" expanded="false" />
-            <element signature="e#2967#3803#1" expanded="false" />
-            <element signature="e#5046#6111#0" expanded="false" />
-            <element signature="e#6203#6795#0" expanded="false" />
-            <element signature="e#6846#7989#1" expanded="false" />
-            <element signature="e#10818#11353#0" expanded="false" />
-            <element signature="e#11403#16813#0" expanded="false" />
-            <element signature="e#16874#17926#0" expanded="false" />
-            <element signature="e#17970#19530#0" expanded="false" />
-            <element signature="e#21332#21558#0" expanded="false" />
-            <element signature="e#21648#22101#0" expanded="false" />
-            <marker date="1546808343815" expanded="true" signature="10232:10248" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10249" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10257" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10264" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10265" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10272" ph="INSERT INTO missing_value... " />
+            <element signature="e#162#362#0" expanded="false" />
+            <element signature="e#390#771#0" expanded="false" />
+            <element signature="e#802#1088#0" expanded="false" />
+            <element signature="e#1123#1336#0" expanded="false" />
+            <element signature="e#1367#1659#0" expanded="false" />
+            <element signature="e#1746#2690#0" expanded="false" />
+            <element signature="e#2985#5014#0" expanded="false" />
+            <element signature="e#2985#3821#1" expanded="false" />
+            <element signature="e#5064#6129#0" expanded="false" />
+            <element signature="e#6221#6813#0" expanded="false" />
+            <element signature="e#6870#10785#0" expanded="false" />
+            <element signature="e#14985#15520#0" expanded="false" />
+            <element signature="e#15570#20980#0" expanded="false" />
+            <element signature="e#21041#22093#0" expanded="false" />
+            <element signature="e#22137#23697#0" expanded="false" />
+            <element signature="e#25535#25761#0" expanded="false" />
+            <element signature="e#25851#26304#0" expanded="false" />
+            <marker date="1546892595946" expanded="true" signature="10256:10272" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10273" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10281" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10288" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10289" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10296" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="14390:14430" ph="INSERT INTO missing_value... " />
           </folding>
         </state>
       </provider>
@@ -750,30 +783,30 @@
         <state relative-caret-position="3961">
           <caret line="233" column="0" lean-forward="true" selection-start-line="233" selection-start-column="0" selection-end-line="233" selection-end-column="0" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#144#344#0" expanded="false" />
-            <element signature="e#372#753#0" expanded="false" />
-            <element signature="e#784#1070#0" expanded="false" />
-            <element signature="e#1105#1318#0" expanded="false" />
-            <element signature="e#1349#1641#0" expanded="false" />
-            <element signature="e#1728#2672#0" expanded="false" />
-            <element signature="e#2967#4996#0" expanded="false" />
-            <element signature="e#2967#3803#1" expanded="false" />
-            <element signature="e#5046#6111#0" expanded="false" />
-            <element signature="e#6203#6795#0" expanded="false" />
-            <element signature="e#6846#7989#1" expanded="false" />
-            <element signature="e#10818#11353#0" expanded="false" />
-            <element signature="e#11403#16813#0" expanded="false" />
-            <element signature="e#16874#17926#0" expanded="false" />
-            <element signature="e#17970#19530#0" expanded="false" />
-            <element signature="e#21332#21558#0" expanded="false" />
-            <element signature="e#21648#22101#0" expanded="false" />
-            <marker date="1546808343815" expanded="true" signature="10232:10248" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10249" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10257" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10264" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10265" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10272" ph="INSERT INTO missing_value... " />
+            <element signature="e#162#362#0" expanded="false" />
+            <element signature="e#390#771#0" expanded="false" />
+            <element signature="e#802#1088#0" expanded="false" />
+            <element signature="e#1123#1336#0" expanded="false" />
+            <element signature="e#1367#1659#0" expanded="false" />
+            <element signature="e#1746#2690#0" expanded="false" />
+            <element signature="e#2985#5014#0" expanded="false" />
+            <element signature="e#2985#3821#1" expanded="false" />
+            <element signature="e#5064#6129#0" expanded="false" />
+            <element signature="e#6221#6813#0" expanded="false" />
+            <element signature="e#6870#10785#0" expanded="false" />
+            <element signature="e#14985#15520#0" expanded="false" />
+            <element signature="e#15570#20980#0" expanded="false" />
+            <element signature="e#21041#22093#0" expanded="false" />
+            <element signature="e#22137#23697#0" expanded="false" />
+            <element signature="e#25535#25761#0" expanded="false" />
+            <element signature="e#25851#26304#0" expanded="false" />
+            <marker date="1546892595946" expanded="true" signature="10256:10272" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10273" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10281" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10288" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10289" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10296" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="14390:14430" ph="INSERT INTO missing_value... " />
           </folding>
         </state>
       </provider>
@@ -849,24 +882,13 @@
     <entry file="file://$PROJECT_DIR$/NBA_py_getter/logs/runtimeLog2019-01-01 23:12:56.290488" />
     <entry file="file://$PROJECT_DIR$/NBA_py_getter/logs/runtimeLog2019-01-01 23:20:21.213585" />
     <entry file="file://$PROJECT_DIR$/NBA_py_getter/logs/runtimeLog2019-01-02 09:56:32.025291" />
-    <entry file="file://$PROJECT_DIR$/NBA_py_getter/logs/runtimeLog2019-01-06 19:59:34.182033">
+    <entry file="file://$PROJECT_DIR$/NBA_py_getter/logs/runtimeLog2019-01-06 19:59:34.182033" />
+    <entry file="file://$PROJECT_DIR$/NBA_py_getter/logs/runtimeLog2019-01-06 20:13:16.200539" />
+    <entry file="file://$PROJECT_DIR$/NBA_py_getter/execution_sequence_notes.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4938">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/NBA_py_getter/logs/runtimeLog2019-01-06 20:13:16.200539">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/NBA_py_getter/pgtest.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="35" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+        <state relative-caret-position="68">
+          <caret line="4" column="66" lean-forward="false" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="66" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -878,51 +900,63 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/NBA_py_getter/execution_sequence_notes.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="66" lean-forward="false" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="66" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/NBA_py_getter/data_templates.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2516">
+        <state relative-caret-position="513">
           <caret line="1206" column="72" lean-forward="false" selection-start-line="1206" selection-start-column="72" selection-end-line="1206" selection-end-column="72" />
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/NBA_py_getter/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="17" column="47" lean-forward="false" selection-start-line="17" selection-start-column="47" selection-end-line="17" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/NBA_py_getter/pgtest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="32" lean-forward="false" selection-start-line="11" selection-start-column="32" selection-end-line="11" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+            <marker date="1546892394878" expanded="true" signature="774:819" ph="INSERT INTO test1... " />
+            <marker date="1546892394878" expanded="true" signature="867:886" ph="SELECT * FRO... test1" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/NBA_py_getter/helpers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="669">
-          <caret line="589" column="39" lean-forward="false" selection-start-line="589" selection-start-column="22" selection-end-line="589" selection-end-column="39" />
+        <state relative-caret-position="2499">
+          <caret line="585" column="0" lean-forward="false" selection-start-line="585" selection-start-column="0" selection-end-line="585" selection-end-column="0" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#144#344#0" expanded="false" />
-            <element signature="e#372#753#0" expanded="false" />
-            <element signature="e#784#1070#0" expanded="false" />
-            <element signature="e#1105#1318#0" expanded="false" />
-            <element signature="e#1349#1641#0" expanded="false" />
-            <element signature="e#1728#2672#0" expanded="false" />
-            <element signature="e#2967#4996#0" expanded="false" />
-            <element signature="e#2967#3803#1" expanded="false" />
-            <element signature="e#5046#6111#0" expanded="false" />
-            <element signature="e#6203#6795#0" expanded="false" />
-            <element signature="e#6846#7989#1" expanded="false" />
-            <element signature="e#10818#11353#0" expanded="false" />
-            <element signature="e#11403#16813#0" expanded="false" />
-            <element signature="e#16874#17926#0" expanded="false" />
-            <element signature="e#17970#19530#0" expanded="false" />
-            <element signature="e#21332#21558#0" expanded="false" />
-            <element signature="e#21648#22101#0" expanded="false" />
-            <marker date="1546808343815" expanded="true" signature="10232:10248" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10249" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10257" ph="INSERT INTO " />
-            <marker date="1546808343815" expanded="true" signature="10232:10264" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10265" ph="INSERT INTO missing_value... " />
-            <marker date="1546808343815" expanded="true" signature="10232:10272" ph="INSERT INTO missing_value... " />
+            <element signature="e#162#362#0" expanded="false" />
+            <element signature="e#390#771#0" expanded="false" />
+            <element signature="e#802#1088#0" expanded="false" />
+            <element signature="e#1123#1336#0" expanded="false" />
+            <element signature="e#1367#1659#0" expanded="false" />
+            <element signature="e#1746#2690#0" expanded="false" />
+            <element signature="e#2985#5014#0" expanded="false" />
+            <element signature="e#2985#3821#1" expanded="false" />
+            <element signature="e#5064#6129#0" expanded="false" />
+            <element signature="e#6221#6813#0" expanded="false" />
+            <element signature="e#6870#10785#0" expanded="false" />
+            <element signature="e#14985#15520#0" expanded="false" />
+            <element signature="e#15570#20980#0" expanded="false" />
+            <element signature="e#21041#22093#0" expanded="false" />
+            <element signature="e#22137#23697#0" expanded="false" />
+            <element signature="e#25535#25761#0" expanded="false" />
+            <element signature="e#25851#26304#0" expanded="false" />
+            <marker date="1546892595946" expanded="true" signature="10256:10272" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10273" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10281" ph="INSERT INTO " />
+            <marker date="1546892595946" expanded="true" signature="10256:10288" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10289" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="10256:10296" ph="INSERT INTO missing_value... " />
+            <marker date="1546892595946" expanded="true" signature="14390:14430" ph="INSERT INTO missing_value... " />
           </folding>
         </state>
       </provider>
@@ -934,14 +968,6 @@
           <folding>
             <element signature="e#387#401#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/NBA_py_getter/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="7" column="16" lean-forward="false" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>

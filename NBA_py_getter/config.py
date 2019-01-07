@@ -18,6 +18,12 @@ local_postgresql_db = ["nba1819_line_score",
                        "nba1819_east_conference_standings_by_day",
                        "nba1819_west_conference_standings_by_day"]
 
+remote_postgresql_db = ["line_score",
+                        "series_standing",
+                        "last_meeting",
+                        "east_conference_standings_by_day",
+                        "west_conference_standings_by_day"]
+
 
 # Logger object configuration
 logger_root_config = {'version': 1,
