@@ -512,16 +512,18 @@ def parse_argv(argv_list):
     """
     Count optional positional params for the script and parse them to modify
     the runtime behavior of main using the flags in main.
+
     :param argv_list: argv list imported from sys
-    :return: [first_run, no_mongo, no_postgre, run_date, is_season_run, seasons_run_season]
+    :return: [first_run, no_mongo, no_postgre, run_date, is_season_run, seasons_run_season, email, user, passwrd]
     """
     # assign default values
     first_run = no_mongo = no_postgre = is_season_run = email = False
-    run_date = season_run_season = None
+    run_date = season_run_season = user = passwrd = None
     default_s_values = ("False", "None")
 
     # assign argv values
-    output = [first_run, no_mongo, no_postgre, run_date, is_season_run, season_run_season, email]
+    output = [first_run, no_mongo, no_postgre, run_date,
+              is_season_run, season_run_season, email, user, passwrd]
     counter = 1
 
     while counter <= len(output) and len(argv_list) > 1:
@@ -662,22 +664,32 @@ def seed_teams(mongo_collection, team_data):
     return True
 
 
-def send_logs_to_email(to_send):
+def send_logs_to_email(to_send, user, passwrd):
     """
+    This function sends the run logs to a specified e-mail address using
+    smptlib. Use argv commnad line arguments to provide user and pass,
+    or type them in at the prompt at runtime.
 
-    :param to_send:
+    :param to_send: the log data to send via e-mail
+    :param user: e-mail address to be used
+    :param passwrd: password for the specified user e-mail address
+
     :return:
     """
-    assert to_send is not None, "The body of the e-mail was set to None"
-
     # imports
-
     import smtplib
     from email.mime.text import MIMEText
 
-    # prompt user for address and password
-    username = input("Please provide e-mail address to send the e-mail: ")
-    password = input("Please provide e-mail password: ")
+    # check if there is any data to work with
+    assert to_send is not None, "The body of the e-mail was set to None"
+
+    # if no username and password provided via arguments prompt user for address and password
+    if user is None or passwrd is None:
+        username = input("Please provide e-mail address to send the e-mail: ")
+        password = input("Please provide e-mail password: ")
+    else:
+        username = user
+        password = passwrd
 
     # define the e-mail message
     msg = MIMEText(str(to_send), 'plain')

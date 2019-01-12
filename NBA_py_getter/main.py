@@ -37,6 +37,8 @@ def main():
     is_season_run = bool(parsed_argv[4])
     season_run_season = parsed_argv[5]
     email = bool(parsed_argv[6])
+    user = parsed_argv[7]
+    passwrd = parsed_argv[8]
 
     logging.info("Setting runtime flags: ", str(parsed_argv))
     logging.info("Setting runtime flags - END.")
@@ -114,7 +116,7 @@ def main():
         # dump the logs into the mongo database and local catalog
         from config import log
         log_dump(log, datetime.today(), logs)
-        send_logs_to_email(log.getvalue())
+        send_logs_to_email(log.getvalue(), user, passwrd)
 
 
 if __name__ == "__main__":
