@@ -527,7 +527,6 @@ def parse_argv(argv_list):
     counter = 1
 
     while counter <= len(output) and len(argv_list) > 1:
-        print("Argv value compared: {}".format(argv_list[counter]))
         if argv_list[counter] not in default_s_values:
             if argv_list[counter] == "True":
                 output[counter - 1] = True   # first argv param is always the python module name!

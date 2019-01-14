@@ -58,7 +58,6 @@ def main():
         # use the date of runtime as run_date
         run_date = runtime_timestamp
 
-
     # start the mongod process with the dbpath specified in config.py
     Popen('mongod --dbpath ' + mongodb_path, shell=True)
     #TODO: capture the Popen output into the log file, think about error handling here
@@ -76,9 +75,7 @@ def main():
     log_config.dictConfig(logger_root_config)
     logger = logging.getLogger(__name__)  # name the logger with the module name
 
-    ### create the db and collections
-    ### 'lazy' creation will create with first insert ###
-
+    # create the db and collections
     teams = mongo_client.nba.teams
     games = mongo_client.nba.games
     logs = mongo_client.nba.logs
@@ -103,15 +100,14 @@ def main():
     else:
         raise LookupError
 
-
-    # call data getters to fetch data from nba.com
-
+    # set run date
     date = run_date
     logging.info("Run date is: " + str(run_date))
 
-    # fetch the Scoreboard json dump
+    # fetch the Scoreboard json dump if the no_postgre flag was not set to True
     try:
-        scoreboard = get_scoreboard(date, Scoreboard)
+        if not no_postgre:
+            get_scoreboard(date, Scoreboard)
     finally:
         # dump the logs into the mongo database and local catalog
         from config import log
