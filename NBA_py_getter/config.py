@@ -4,7 +4,7 @@ from io import StringIO
 
 # global variables
 
-season = "2017-18"
+season = "2018-19"
 log = StringIO()  # container for logs
 runtime_timestamp = datetime.today()
 mongodb_path = '/home/newton/Programming/MDB/'

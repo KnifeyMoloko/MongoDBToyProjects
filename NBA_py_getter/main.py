@@ -19,9 +19,9 @@ from dateutil import parser
 from datetime import datetime
 from pathlib import Path
 from nba_py import constants, team, Scoreboard
-from config import log, logger_root_config, nba_teams, runtime_timestamp, mongodb_path
+from config import log, logger_root_config, nba_teams, runtime_timestamp, mongodb_path, season
 from helpers import *
-from subprocess import Popen, TimeoutExpired
+from subprocess import Popen
 
 
 def main():
@@ -108,6 +108,11 @@ def main():
     try:
         if not no_postgre:
             get_scoreboard(date, Scoreboard)
+
+        # if no_monngo is False, get the season game logs
+        elif not no_mongo:
+            get_mongo_run()
+            #get_season_nba_game_logs(nba_teams, season, team.TeamGameLogs)
     finally:
         # dump the logs into the mongo database and local catalog
         from config import log

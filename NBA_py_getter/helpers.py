@@ -233,7 +233,7 @@ def postgresql_dispatcher_local(func):
     :return: same return as the func input: a tuple (mongodb_data,
     postgresql_data) with preformatted data for both db's dispatchers
     """
-    # data dependecies imports
+    # data dependencies imports
     from config import postgresql_username, postgresql_dbname, \
         postgresql_host_type, local_postgresql_db
     from data_templates import postgresql_line_score_values, \
@@ -643,6 +643,58 @@ def get_season_run(season, mongo_collection, nba_py_module):
     # get the team_logs
     games = get_season_nba_game_logs(nba_teams, season, nba_py_mod.TeamGameLogs)
     return games, nba_teams, mongo_collection
+
+
+@basic_log
+def mongo_teams_run(team, nba_teams, season):
+    t = team
+    nba = nba_teams
+    s = season
+    return t, nba, s
+
+
+@basic_log
+def mongo_games_run(ame, new_games_ids):pass
+
+
+@basic_log
+def get_mongo_run():
+    # get team game logs
+    # extract game ids
+    # update local mongo db with new game ids
+    # use team ids to: -> team ids
+        # get teams' snapshot for component1 -> , team ids, timestamped snapshot for component1
+        # update local mongodb with component 1 -> team ids
+        # get teams' snapshot for component2
+        #TODO: structure the snapshot as monoengine object
+
+    # use new game ids to -> new game ids
+        # download component 1 -> new game ids, component1
+        # update local mongodb with component1 -> new game ids
+        # download component 2 -> new game ids, component2
+        # update local mongodb with componnet2 -> game ids
+        # ...
+        #
+    from nba_py import team, game
+    from config import nba_teams, season
+
+    from pprint import pprint
+    id = nba_teams[1]['_id']
+    common_roster = team.TeamCommonRoster(id).roster()
+    common_roster_headers = team.TeamCommonRoster(id).json
+    pprint(common_roster_headers)
+
+
+    """
+    logging.info("Mongo run: teams - START")
+    new_games_ids = mongo_teams_run(team, nba_teams, season)
+    logging.info("Mongo run: teams - END")
+
+    logging.info("Mongo run: games - START")
+    mongo_games_run(game, new_games_ids)
+    logging.info("Mongo run: games - END")
+    """
+    return
 
 
 # data manipulation funcs

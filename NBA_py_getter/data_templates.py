@@ -1159,6 +1159,61 @@ scoreboard_headers = \
   'ROAD_RECORD'],
  ['GAME_ID', 'PT_AVAILABLE']]
 
+team_game_logs_headers = \
+    ['Team_ID',
+     'Game_ID',
+     'GAME_DATE',
+     'MATCHUP',
+     'WL',
+     'W',
+     'L',
+     'W_PCT',
+     'MIN',
+     'FGM',
+     'FGA',
+     'FG_PCT',
+     'FG3M',
+     'FG3A',
+     'FG3_PCT',
+     'FTM',
+     'FTA',
+     'FT_PCT',
+     'OREB',
+     'DREB',
+     'REB',
+     'AST',
+     'STL',
+     'BLK',
+     'TOV',
+     'PF',
+     'PTS']
+
+common_team_roster_player_headers = ['TeamID',
+                             'SEASON',
+                             'LeagueID',
+                             'PLAYER',
+                             'NUM',
+                             'POSITION',
+                             'HEIGHT',
+                             'WEIGHT',
+                             'BIRTH_DATE',
+                             'AGE',
+                             'EXP',
+                             'SCHOOL',
+                             'PLAYER_ID']
+
+common_team_roster_coach_headers = ['TEAM_ID',
+                             'SEASON',
+                             'COACH_ID',
+                             'FIRST_NAME',
+                             'LAST_NAME',
+                             'COACH_NAME',
+                             'COACH_CODE',
+                             'IS_ASSISTANT',
+                             'COACH_TYPE',
+                             'SCHOOL',
+                             'SORT_SEQUENCE']
+
 scoreboard_series_standing_template = ['0021800332', 1610612739, 1610612761, '2018-12-01T00:00:00', 0, 2, 'Toronto']
 last_meeting_template = ['0021800330', '0021800042', '2018-10-22T00:00:00', 1610612752, 'New York', 'Knicks', 'NYK',
                          113, 1610612749, 'Milwaukee', 'Bucks', 'MIL', 124]
