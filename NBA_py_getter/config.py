@@ -7,10 +7,10 @@ from io import StringIO
 season = "2018-19"
 log = StringIO()  # container for logs
 runtime_timestamp = datetime.today()
-mongodb_path = '/home/newton/Programming/MDB/'
-postgresql_username = 'newton'
-postgresql_dbname = 'newton'
-postgresql_host_type = '/tmp/'
+mongodb_path = '/home/knifey-moloko/MDB/'
+postgresql_username = 'knifey-moloko'
+postgresql_dbname = 'knifey-moloko'
+postgresql_host_type = '/var/run/postgresql'
 # NOTE: the db names are in a list for convenience for the price of flexibility
 local_postgresql_db = ["nba1819_line_score",
                        "nba1819_series_standing",
@@ -55,6 +55,51 @@ logger_root_config = {'version': 1,
                                   {
                                       'class': 'logging.FileHandler',
                                       'filename': './logs/runtimeLog' + str(runtime_timestamp),
+                                      'formatter': 'default'
+                                  },
+                              'string_handler':
+                                  {
+                                      'class': 'logging.StreamHandler',
+                                      'stream': log,
+                                      'formatter': 'default'
+                                  },
+                              'terminal':
+                                  {
+                                      'class': 'logging.StreamHandler',
+                                      'formatter': 'default'
+                                  }
+                          }
+                      }
+
+logger_root_config_data_test = {'version': 1,
+                      'disable_existing_loggers': False,
+                      'loggers':
+                          {
+                              '':
+                                  {
+                                      'level': 'DEBUG',
+                                      'handlers': ['file_handler', 'string_handler', 'terminal']
+                                  },
+                              'helpers_logger':
+                                  {
+                                      'level': 'DEBUG',
+                                      'handlers': ['file_handler', 'string_handler', 'terminal']
+                                  }
+                          },
+                      'formatters':
+                          {
+                              'default':
+                                  {
+                                      'format': '%(asctime)s : %(name)s : %(funcName)s : %(lineno)d '
+                                                ': %(levelname)s : %(message)s'
+                                  }
+                          },
+                      'handlers':
+                          {
+                              'file_handler':
+                                  {
+                                      'class': 'logging.FileHandler',
+                                      'filename': './data_test_logs/runtimeLog' + str(runtime_timestamp),
                                       'formatter': 'default'
                                   },
                               'string_handler':
