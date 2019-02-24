@@ -87,6 +87,6 @@ class Smurf:
 
 
 #output = [get_team_log()]
-
-pprint(Smurf.__dict__)
+print("==================================")
+pprint(vars(Smurf))
 
