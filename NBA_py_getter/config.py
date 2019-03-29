@@ -7,10 +7,10 @@ from io import StringIO
 season = "2018-19"
 log = StringIO()  # container for logs
 runtime_timestamp = datetime.today()
-mongodb_path = '/home/knifey-moloko/MDB/'
-postgresql_username = 'knifey-moloko'
-postgresql_dbname = 'knifey-moloko'
-postgresql_host_type = '/var/run/postgresql'
+mongodb_path = '/home/newton/Programming/MDB/'
+postgresql_username = 'newton'
+postgresql_dbname = 'newton'
+postgresql_host_type = '/tmp/'
 # NOTE: the db names are in a list for convenience for the price of flexibility
 local_postgresql_db = ["nba1819_line_score",
                        "nba1819_series_standing",

@@ -1,5 +1,7 @@
 import logging
 import functools
+import pprint
+
 import psycopg2
 import subprocess
 
@@ -289,7 +291,7 @@ def postgresql_dispatcher_local(func):
                 db_command = "INSERT INTO {db} {fields} VALUES ({val});"\
                     .format(db=dbname, fields=z[0], val=str(z[1][i])[1:-1])
 
-                # execute prepared SQL command
+                # execute prepared SQL commands
                 cursor.execute(db_command)
 
         # commit all of the inserts to db, close cursor and db connection
@@ -599,7 +601,7 @@ def get_scoreboard(date, scoreboard_instance):
     :param date: datetime.datetime object as the date we query for (-1 to get yesterday scores)
     :return: nba_py Scoreboard object
     """
-    scoreboard_json = scoreboard_instance(month=date.month, day=date.day - 1, year=date.year).json
+    scoreboard_json = scoreboard_instance(month=date.month, day=date.day, year=date.year, offset=-1).json
     return scoreboard_json
 
 
