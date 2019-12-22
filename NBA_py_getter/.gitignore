@@ -6,8 +6,8 @@
 
 # PyCharm settings
 .idea/
-*idea/
-*idea*
+../.idea
+../.idea/
 
 # logging
 logs/
