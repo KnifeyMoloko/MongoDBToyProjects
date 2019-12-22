@@ -10,3 +10,6 @@
 # logging
 logs/
 data_test_logs/
+
+# venv
+*/venv/
