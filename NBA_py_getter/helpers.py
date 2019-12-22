@@ -585,7 +585,7 @@ def get_line_score(func):
     return wrapper
 
 
-@postgresql_dispatcher_remote
+#@postgresql_dispatcher_remote
 @postgresql_dispatcher_local
 @postgresql_validator
 @get_line_score

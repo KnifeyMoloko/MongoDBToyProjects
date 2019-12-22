@@ -1,9 +1,12 @@
+# pycache
+*__pycache__*
+
 # db stuff
 *.sqlite
 
 # PyCharm settings
-.idea/*
+.idea/
 
 # logging
-logs/*
-data_test_logs/*
+logs/
+data_test_logs/
